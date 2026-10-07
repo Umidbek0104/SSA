@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>O‘qituvchilar — Smart School Analytics</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --dark: #172033;
+            --muted: #64748b;
+            --bg: #f5f7fb;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--dark);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand small {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .menu {
+            padding: 18px 12px;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 700;
+            padding: 10px 12px 8px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            margin-bottom: 4px;
+            border-radius: 9px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .menu a i {
+            font-size: 17px;
+            width: 21px;
+        }
+
+        .menu a:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .menu a.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .topbar {
+            height: 72px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .breadcrumb-text {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .notification {
+            position: relative;
+        }
+
+        .notification span {
+            position: absolute;
+            top: -4px;
+            right: -3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: #fff;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding-left: 10px;
+            border-left: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .profile-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .profile-role {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            padding: 28px 30px;
+        }
+
+        .stats-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 19px;
+            height: 100%;
+            transition: .2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, .06);
+        }
+
+        .stats-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .green {
+            background: #ecfdf5;
+            color: #16a34a;
+        }
+
+        .orange {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .purple {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        .stats-number {
+            font-size: 25px;
+            font-weight: 750;
+            margin-top: 12px;
+        }
+
+        .stats-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* ================= SECTION ================= */
+
+        .section-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 19px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header h6 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* ================= FILTER ================= */
+
+        .filter-area {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #fcfdff;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 13px;
+            border-color: #dbe1e8;
+            min-height: 40px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 .2rem rgba(37, 99, 235, .08);
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .teacher-table {
+            margin: 0;
+            min-width: 1050px;
+        }
+
+        .teacher-table thead th {
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            padding: 13px 16px;
+            white-space: nowrap;
+        }
+
+        .teacher-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .teacher-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .teacher-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .teacher-name {
+            font-weight: 650;
+            color: #1e293b;
+        }
+
+        .teacher-id {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-leave {
+            background: #fef3c7;
+            color: #a16207;
+        }
+
+        .rating {
+            font-weight: 700;
+        }
+
+        .rating-good {
+            color: #16a34a;
+        }
+
+        .rating-medium {
+            color: #d97706;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .action-btn:hover {
+            background: #eff6ff;
+            color: var(--primary);
+            border-color: #bfdbfe;
+        }
+
+        .pagination-area {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .result-count {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        .mobile-toggle {
+            display: none;
+        }
+
+        @media(max-width: 991px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .25s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-toggle {
+                display: inline-flex;
+            }
+
+            .profile {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 22px 18px;
+            }
+        }
+
+        @media(max-width: 575px) {
+
+            .topbar {
+                height: 64px;
+            }
+
+            .page-title {
+                font-size: 17px;
+            }
+
+            .top-actions {
+                gap: 6px;
+            }
+
+            .icon-btn {
+                width: 35px;
+                height: 35px;
+            }
+
+            .pagination-area {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <h5>Smart School</h5>
+                <small>Analytics System</small>
+            </div>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <div class="menu-title">
+                Asosiy
+            </div>
+
+            <a href="index.html">
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+
+            <a href="students.html">
+                <i class="bi bi-people-fill"></i>
+                O‘quvchilar
+            </a>
+
+            <a href="teachers.html" class="active">
+                <i class="bi bi-person-workspace"></i>
+                O‘qituvchilar
+            </a>
+
+            <a href="classes.html">
+                <i class="bi bi-building"></i>
+                Sinflar
+            </a>
+
+            <a href="subjects.html">
+                <i class="bi bi-book"></i>
+                Fanlar
+            </a>
+
+            <a href="results.html">
+                <i class="bi bi-bar-chart-fill"></i>
+                Natijalar
+            </a>
+
+
+            <div class="menu-title">
+                Tahlil
+            </div>
+
+            <a href="analytics.html">
+                <i class="bi bi-graph-up-arrow"></i>
+                Analitika
+            </a>
+
+            <a href="reports.html">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Hisobotlar
+            </a>
+
+
+            <div class="menu-title">
+                Tizim
+            </div>
+
+            <a href="notifications.html">
+                <i class="bi bi-bell-fill"></i>
+                Bildirishnomalar
+            </a>
+
+            <a href="import-export.html">
+                <i class="bi bi-arrow-down-up"></i>
+                Import / Export
+            </a>
+
+            <a href="users-roles.html">
+                <i class="bi bi-shield-lock"></i>
+                Foydalanuvchilar
+            </a>
+
+            <a href="settings.html">
+                <i class="bi bi-gear-fill"></i>
+                Sozlamalar
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <button class="icon-btn mobile-toggle"
+                        onclick="toggleSidebar()">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <div>
+
+                    <h1 class="page-title">
+                        O‘qituvchilar
+                    </h1>
+
+                    <div class="breadcrumb-text">
+                        Dashboard / O‘qituvchilar
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <button class="icon-btn notification"
+                        onclick="location.href='notifications.html'">
+
+                    <i class="bi bi-bell"></i>
+
+                    <span>5</span>
+
+                </button>
+
+
+                <div class="profile">
+
+                    <div class="avatar">
+                        AD
+                    </div>
+
+                    <div>
+
+                        <div class="profile-name">
+                            Admin
+                        </div>
+
+                        <div class="profile-role">
+                            Administrator
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- STATISTICS -->
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon blue">
+                            <i class="bi bi-person-workspace"></i>
+                        </div>
+
+                        <div class="stats-number">
+                            64
+                        </div>
+
+                        <div class="stats-label">
+                            Jami o‘qituvchilar
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon green">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+
+                        <div class="stats-number">
+                            61
+                        </div>
+
+                        <div class="stats-label">
+                            Faol o‘qituvchilar
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon orange">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
+
+                        <div class="stats-number">
+                            18
+                        </div>
+
+                        <div class="stats-label">
+                            Fanlar
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="stats-card">
+
+                        <div class="stats-icon purple">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+
+                        <div class="stats-number">
+                            84.7%
+                        </div>
+
+                        <div class="stats-label">
+                            O‘rtacha o‘quvchi natijasi
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TEACHERS -->
+
+            <div class="section-card">
+
+                <div class="section-header">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <div>
+
+                            <h6>
+                                O‘qituvchilar ro‘yxati
+                            </h6>
+
+                            <p>
+                                Maktabdagi barcha o‘qituvchilar va ularning ko‘rsatkichlari
+                            </p>
+
+                        </div>
+
+
+                        <button class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addTeacherModal">
+
+                            <i class="bi bi-plus-lg me-1"></i>
+
+                            O‘qituvchi qo‘shish
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FILTER -->
+
+                <div class="filter-area">
+
+                    <div class="row g-3 align-items-end">
+
+                        <div class="col-lg-4">
+
+                            <label class="form-label">
+                                Qidirish
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-search"></i>
+                                </span>
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="searchInput"
+                                       placeholder="Ism, familiya yoki ID...">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-4">
+
+                            <label class="form-label">
+                                Fan
+                            </label>
+
+                            <select class="form-select"
+                                    id="subjectFilter">
+
+                                <option value="">
+                                    Barcha fanlar
+                                </option>
+
+                                <option>Informatika</option>
+                                <option>Matematika</option>
+                                <option>Fizika</option>
+                                <option>Ingliz tili</option>
+                                <option>Biologiya</option>
+                                <option>Kimyo</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-4">
+
+                            <label class="form-label">
+                                Holat
+                            </label>
+
+                            <select class="form-select"
+                                    id="statusFilter">
+
+                                <option value="">
+                                    Barchasi
+                                </option>
+
+                                <option value="active">
+                                    Faol
+                                </option>
+
+                                <option value="leave">
+                                    Ta’tilda
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-lg-2 col-md-4">
+
+                            <button class="btn btn-outline-secondary w-100"
+                                    onclick="resetFilters()">
+
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+                                Tozalash
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLE -->
+
+                <div class="table-wrapper">
+
+                    <table class="table teacher-table">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>
+                                O‘qituvchi
+                            </th>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                Fan
+                            </th>
+
+                            <th>
+                                Sinflar
+                            </th>
+
+                            <th>
+                                O‘quvchilar
+                            </th>
+
+                            <th>
+                                O‘rtacha natija
+                            </th>
+
+                            <th>
+                                Telefon
+                            </th>
+
+                            <th>
+                                Holat
+                            </th>
+
+                            <th>
+                                Amallar
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody id="teacherTable">
+
+                        <!-- 1 -->
+
+                        <tr data-name="Dilshod Karimov"
+                            data-id="T001"
+                            data-subject="Informatika"
+                            data-status="active">
+
+                            <td>
+
+                                <div class="teacher-info">
+
+                                    <div class="teacher-avatar">
+                                        DK
+                                    </div>
+
+                                    <div>
+
+                                        <div class="teacher-name">
+                                            Dilshod Karimov
+                                        </div>
+
+                                        <div class="teacher-id">
+                                            Informatika o‘qituvchisi
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                T001
+                            </td>
+
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary">
+                                    Informatika
+                                </span>
+                            </td>
+
+                            <td>
+                                8-A, 9-A, 11-A
+                            </td>
+
+                            <td>
+                                86
+                            </td>
+
+                            <td>
+                                <span class="rating rating-good">
+                                    89.4%
+                                </span>
+                            </td>
+
+                            <td>
+                                +998 90 111 22 33
+                            </td>
+
+                            <td>
+                                <span class="status status-active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Faol
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="action-btn"
+                                        onclick="viewTeacher('Dilshod Karimov')"
+                                        title="Ko‘rish">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                                <button class="action-btn"
+                                        onclick="editTeacher('Dilshod Karimov')"
+                                        title="Tahrirlash">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 2 -->
+
+                        <tr data-name="Aziza Rahimova"
+                            data-id="T002"
+                            data-subject="Matematika"
+                            data-status="active">
+
+                            <td>
+
+                                <div class="teacher-info">
+
+                                    <div class="teacher-avatar">
+                                        AR
+                                    </div>
+
+                                    <div>
+
+                                        <div class="teacher-name">
+                                            Aziza Rahimova
+                                        </div>
+
+                                        <div class="teacher-id">
+                                            Matematika o‘qituvchisi
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                T002
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success-subtle text-success">
+                                    Matematika
+                                </span>
+                            </td>
+
+                            <td>
+                                9-A, 10-A, 11-A
+                            </td>
+
+                            <td>
+                                91
+                            </td>
+
+                            <td>
+                                <span class="rating rating-good">
+                                    86.7%
+                                </span>
+                            </td>
+
+                            <td>
+                                +998 91 222 33 44
+                            </td>
+
+                            <td>
+                                <span class="status status-active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Faol
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="action-btn"
+                                        onclick="viewTeacher('Aziza Rahimova')">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                                <button class="action-btn"
+                                        onclick="editTeacher('Aziza Rahimova')">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 3 -->
+
+                        <tr data-name="Jasur Ismoilov"
+                            data-id="T003"
+                            data-subject="Fizika"
+                            data-status="active">
+
+                            <td>
+
+                                <div class="teacher-info">
+
+                                    <div class="teacher-avatar">
+                                        JI
+                                    </div>
+
+                                    <div>
+
+                                        <div class="teacher-name">
+                                            Jasur Ismoilov
+                                        </div>
+
+                                        <div class="teacher-id">
+                                            Fizika o‘qituvchisi
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                T003
+                            </td>
+
+                            <td>
+                                <span class="badge bg-warning-subtle text-warning-emphasis">
+                                    Fizika
+                                </span>
+                            </td>
+
+                            <td>
+                                9-B, 10-B, 11-B
+                            </td>
+
+                            <td>
+                                78
+                            </td>
+
+                            <td>
+                                <span class="rating rating-good">
+                                    82.3%
+                                </span>
+                            </td>
+
+                            <td>
+                                +998 93 333 44 55
+                            </td>
+
+                            <td>
+                                <span class="status status-active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Faol
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="action-btn"
+                                        onclick="viewTeacher('Jasur Ismoilov')">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                                <button class="action-btn"
+                                        onclick="editTeacher('Jasur Ismoilov')">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 4 -->
+
+                        <tr data-name="Malika Yusupova"
+                            data-id="T004"
+                            data-subject="Ingliz tili"
+                            data-status="active">
+
+                            <td>
+
+                                <div class="teacher-info">
+
+                                    <div class="teacher-avatar">
+                                        MY
+                                    </div>
+
+                                    <div>
+
+                                        <div class="teacher-name">
+                                            Malika Yusupova
+                                        </div>
+
+                                        <div class="teacher-id">
+                                            Ingliz tili o‘qituvchisi
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                T004
+                            </td>
+
+                            <td>
+                                <span class="badge bg-info-subtle text-info-emphasis">
+                                    Ingliz tili
+                                </span>
+                            </td>
+
+                            <td>
+                                8-B, 9-A, 10-A
+                            </td>
+
+                            <td>
+                                84
+                            </td>
+
+                            <td>
+                                <span class="rating rating-good">
+                                    80.6%
+                                </span>
+                            </td>
+
+                            <td>
+                                +998 94 444 55 66
+                            </td>
+
+                            <td>
+                                <span class="status status-active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Faol
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="action-btn"
+                                        onclick="viewTeacher('Malika Yusupova')">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                                <button class="action-btn"
+                                        onclick="editTeacher('Malika Yusupova')">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 5 -->
+
+                        <tr data-name="Shahnoza Aliyeva"
+                            data-id="T005"
+                            data-subject="Biologiya"
+                            data-status="leave">
+
+                            <td>
+
+                                <div class="teacher-info">
+
+                                    <div class="teacher-avatar">
+                                        SA
+                                    </div>
+
+                                    <div>
+
+                                        <div class="teacher-name">
+                                            Shahnoza Aliyeva
+                                        </div>
+
+                                        <div class="teacher-id">
+                                            Biologiya o‘qituvchisi
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                T005
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success-subtle text-success-emphasis">
+                                    Biologiya
+                                </span>
+                            </td>
+
+                            <td>
+                                7-A, 8-A, 9-B
+                            </td>
+
+                            <td>
+                                73
+                            </td>
+
+                            <td>
+                                <span class="rating rating-medium">
+                                    77.8%
+                                </span>
+                            </td>
+
+                            <td>
+                                +998 95 555 66 77
+                            </td>
+
+                            <td>
+                                <span class="status status-leave">
+                                    <i class="bi bi-clock"></i>
+                                    Ta’tilda
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="action-btn"
+                                        onclick="viewTeacher('Shahnoza Aliyeva')">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                                <button class="action-btn"
+                                        onclick="editTeacher('Shahnoza Aliyeva')">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- 6 -->
+
+                        <tr data-name="Rustam Qodirov"
+                            data-id="T006"
+                            data-subject="Kimyo"
+                            data-status="active">
+
+                            <td>
+
+                                <div class="teacher-info">
+
+                                    <div class="teacher-avatar">
+                                        RQ
+                                    </div>
+
+                                    <div>
+
+                                        <div class="teacher-name">
+                                            Rustam Qodirov
+                                        </div>
+
+                                        <div class="teacher-id">
+                                            Kimyo o‘qituvchisi
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                T006
+                            </td>
+
+                            <td>
+                                <span class="badge bg-danger-subtle text-danger">
+                                    Kimyo
+                                </span>
+                            </td>
+
+                            <td>
+                                8-B, 9-B, 10-B
+                            </td>
+
+                            <td>
+                                76
+                            </td>
+
+                            <td>
+                                <span class="rating rating-medium">
+                                    74.5%
+                                </span>
+                            </td>
+
+                            <td>
+                                +998 97 666 77 88
+                            </td>
+
+                            <td>
+                                <span class="status status-active">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Faol
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <button class="action-btn"
+                                        onclick="viewTeacher('Rustam Qodirov')">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                                <button class="action-btn"
+                                        onclick="editTeacher('Rustam Qodirov')">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- PAGINATION -->
+
+                <div class="pagination-area">
+
+                    <div class="result-count"
+                         id="resultCount">
+
+                        6 ta o‘qituvchi ko‘rsatilmoqda
+
+                    </div>
+
+
+                    <nav>
+
+                        <ul class="pagination pagination-sm mb-0">
+
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">
+                                    Oldingi
+                                </a>
+                            </li>
+
+                            <li class="page-item active">
+                                <a class="page-link" href="#">
+                                    1
+                                </a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#">
+                                    2
+                                </a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#">
+                                    3
+                                </a>
+                            </li>
+
+                            <li class="page-item">
+                                <a class="page-link" href="#">
+                                    Keyingi
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </nav>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ================= ADD TEACHER MODAL ================= -->
+
+<div class="modal fade"
+     id="addTeacherModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5 class="modal-title">
+                        Yangi o‘qituvchi qo‘shish
+                    </h5>
+
+                    <small class="text-muted">
+                        O‘qituvchi ma’lumotlarini kiriting
+                    </small>
+
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <form id="teacherForm">
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Ism
+                            </label>
+
+                            <input type="text"
+                                   id="firstName"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Familiya
+                            </label>
+
+                            <input type="text"
+                                   id="lastName"
+                                   class="form-control"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                O‘qituvchi ID
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="T007"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Fan
+                            </label>
+
+                            <select class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Fan tanlang
+                                </option>
+
+                                <option>
+                                    Informatika
+                                </option>
+
+                                <option>
+                                    Matematika
+                                </option>
+
+                                <option>
+                                    Fizika
+                                </option>
+
+                                <option>
+                                    Ingliz tili
+                                </option>
+
+                                <option>
+                                    Biologiya
+                                </option>
+
+                                <option>
+                                    Kimyo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Telefon
+                            </label>
+
+                            <input type="tel"
+                                   class="form-control"
+                                   placeholder="+998 90 000 00 00"
+                                   required>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Elektron pochta
+                            </label>
+
+                            <input type="email"
+                                   class="form-control"
+                                   placeholder="teacher@example.com">
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Mutaxassislik
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="Masalan: Dasturiy injiniring">
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Ish tajribasi
+                            </label>
+
+                            <select class="form-select">
+
+                                <option>
+                                    1 yildan kam
+                                </option>
+
+                                <option>
+                                    1–3 yil
+                                </option>
+
+                                <option>
+                                    3–5 yil
+                                </option>
+
+                                <option>
+                                    5–10 yil
+                                </option>
+
+                                <option>
+                                    10+ yil
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-12">
+
+                            <label class="form-label">
+                                Qo‘shimcha ma’lumot
+                            </label>
+
+                            <textarea class="form-control"
+                                      rows="3"
+                                      placeholder="Qo‘shimcha ma’lumot..."></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-light"
+                            data-bs-dismiss="modal">
+
+                        Bekor qilish
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-lg me-1"></i>
+
+                        Saqlash
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= VIEW TEACHER MODAL ================= -->
+
+<div class="modal fade"
+     id="viewTeacherModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    O‘qituvchi profili
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body"
+                 id="teacherDetails">
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    Yopish
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    /* SIDEBAR */
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList.toggle("show");
+
+    }
+
+
+    /* FILTERS */
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const subjectFilter =
+        document.getElementById("subjectFilter");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+    const rows =
+        document.querySelectorAll(
+            "#teacherTable tr"
+        );
+
+
+    function filterTeachers() {
+
+        const search =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
+        const subject =
+            subjectFilter.value;
+
+        const status =
+            statusFilter.value;
+
+        let visible = 0;
+
+
+        rows.forEach(row => {
+
+            const name =
+                row.dataset.name.toLowerCase();
+
+            const id =
+                row.dataset.id.toLowerCase();
+
+            const teacherSubject =
+                row.dataset.subject;
+
+            const teacherStatus =
+                row.dataset.status;
+
+
+            const matchesSearch =
+                name.includes(search) ||
+                id.includes(search);
+
+
+            const matchesSubject =
+                !subject ||
+                teacherSubject === subject;
+
+
+            const matchesStatus =
+                !status ||
+                teacherStatus === status;
+
+
+            const show =
+                matchesSearch &&
+                matchesSubject &&
+                matchesStatus;
+
+
+            row.style.display =
+                show ? "" : "none";
+
+
+            if (show) {
+                visible++;
+            }
+
+        });
+
+
+        document
+            .getElementById("resultCount")
+            .innerText =
+            visible +
+            " ta o‘qituvchi ko‘rsatilmoqda";
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterTeachers
+    );
+
+    subjectFilter.addEventListener(
+        "change",
+        filterTeachers
+    );
+
+    statusFilter.addEventListener(
+        "change",
+        filterTeachers
+    );
+
+
+    /* RESET */
+
+    function resetFilters() {
+
+        searchInput.value = "";
+
+        subjectFilter.value = "";
+
+        statusFilter.value = "";
+
+        filterTeachers();
+
+    }
+
+
+    /* VIEW TEACHER */
+
+    function viewTeacher(name) {
+
+        const teachers = {
+
+            "Dilshod Karimov": {
+                id: "T001",
+                subject: "Informatika",
+                classes: "8-A, 9-A, 11-A",
+                students: "86",
+                result: "89.4%",
+                phone: "+998 90 111 22 33",
+                status: "Faol"
+            },
+
+            "Aziza Rahimova": {
+                id: "T002",
+                subject: "Matematika",
+                classes: "9-A, 10-A, 11-A",
+                students: "91",
+                result: "86.7%",
+                phone: "+998 91 222 33 44",
+                status: "Faol"
+            },
+
+            "Jasur Ismoilov": {
+                id: "T003",
+                subject: "Fizika",
+                classes: "9-B, 10-B, 11-B",
+                students: "78",
+                result: "82.3%",
+                phone: "+998 93 333 44 55",
+                status: "Faol"
+            },
+
+            "Malika Yusupova": {
+                id: "T004",
+                subject: "Ingliz tili",
+                classes: "8-B, 9-A, 10-A",
+                students: "84",
+                result: "80.6%",
+                phone: "+998 94 444 55 66",
+                status: "Faol"
+            },
+
+            "Shahnoza Aliyeva": {
+                id: "T005",
+                subject: "Biologiya",
+                classes: "7-A, 8-A, 9-B",
+                students: "73",
+                result: "77.8%",
+                phone: "+998 95 555 66 77",
+                status: "Ta’tilda"
+            },
+
+            "Rustam Qodirov": {
+                id: "T006",
+                subject: "Kimyo",
+                classes: "8-B, 9-B, 10-B",
+                students: "76",
+                result: "74.5%",
+                phone: "+998 97 666 77 88",
+                status: "Faol"
+            }
+
+        };
+
+
+        const teacher =
+            teachers[name];
+
+        if (!teacher) {
+            return;
+        }
+
+
+        const initials =
+            name
+                .split(" ")
+                .map(word => word[0])
+                .join("");
+
+
+        document
+            .getElementById("teacherDetails")
+            .innerHTML = `
+
+                <div class="text-center mb-4">
+
+                    <div class="teacher-avatar mx-auto mb-2"
+                         style="
+                            width:65px;
+                            height:65px;
+                            font-size:18px;
+                         ">
+
+                        ${initials}
+
+                    </div>
+
+                    <h5 class="mb-1">
+                        ${name}
+                    </h5>
+
+                    <div class="text-muted small">
+                        ${teacher.id}
+                    </div>
+
+                </div>
+
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3">
+
+                            <small class="text-muted">
+                                Fan
+                            </small>
+
+                            <div class="fw-semibold">
+                                ${teacher.subject}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3">
+
+                            <small class="text-muted">
+                                Holat
+                            </small>
+
+                            <div class="fw-semibold text-success">
+                                ${teacher.status}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3">
+
+                            <small class="text-muted">
+                                Biriktirilgan sinflar
+                            </small>
+
+                            <div class="fw-semibold">
+                                ${teacher.classes}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3">
+
+                            <small class="text-muted">
+                                O‘quvchilar
+                            </small>
+
+                            <div class="fw-semibold">
+                                ${teacher.students} nafar
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3">
+
+                            <small class="text-muted">
+                                O‘rtacha natija
+                            </small>
+
+                            <div class="fw-bold text-primary">
+                                ${teacher.result}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="border rounded p-3">
+
+                            <small class="text-muted">
+                                Telefon
+                            </small>
+
+                            <div class="fw-semibold">
+                                ${teacher.phone}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+        const modal =
+            new bootstrap.Modal(
+                document.getElementById(
+                    "viewTeacherModal"
+                )
+            );
+
+        modal.show();
+
+    }
+
+
+    /* EDIT */
+
+    function editTeacher(name) {
+
+        alert(
+            name +
+            " ma’lumotlarini tahrirlash oynasi backend ulanishidan keyin ishlaydi."
+        );
+
+    }
+
+
+    /* ADD */
+
+    document
+        .getElementById("teacherForm")
+        .addEventListener(
+            "submit",
+            function(e) {
+
+                e.preventDefault();
+
+                const firstName =
+                    document.getElementById(
+                        "firstName"
+                    ).value;
+
+                const lastName =
+                    document.getElementById(
+                        "lastName"
+                    ).value;
+
+
+                const modal =
+                    bootstrap.Modal.getInstance(
+                        document.getElementById(
+                            "addTeacherModal"
+                        )
+                    );
+
+                modal.hide();
+
+
+                this.reset();
+
+
+                alert(
+                    firstName +
+                    " " +
+                    lastName +
+                    " muvaffaqiyatli qo‘shildi. Demo rejim."
+                );
+
+            }
+        );
+
+</script>
+
+</body>
+</html>

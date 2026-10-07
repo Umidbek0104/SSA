@@ -1,0 +1,3247 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart School Analytics</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #101828;
+            color: white;
+            padding: 20px 14px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 10px 22px;
+            border-bottom: 1px solid #273244;
+        }
+
+        .brand-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand h5 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .brand small {
+            color: #98a2b3;
+            font-size: 11px;
+        }
+
+        .menu-title {
+            color: #667085;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 24px 10px 8px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 13px;
+            border-radius: 9px;
+            margin-bottom: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .menu-link:hover,
+        .menu-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-link i {
+            font-size: 17px;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .header {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #eaecf0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .notification {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            background: #ef4444;
+            color: white;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile small {
+            display: block;
+            color: #98a2b3;
+            font-size: 11px;
+        }
+
+        .mobile-btn {
+            display: none;
+        }
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            padding: 30px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: #667085;
+            margin-bottom: 25px;
+        }
+
+        /* ================= CARDS ================= */
+
+        .stat-card {
+            background: white;
+            border: 1px solid #eaecf0;
+            border-radius: 15px;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .green {
+            background: #ecfdf3;
+            color: #16a34a;
+        }
+
+        .orange {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .purple {
+            background: #faf5ff;
+            color: #9333ea;
+        }
+
+        .red {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .stat-number {
+            font-size: 27px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: #667085;
+            font-size: 13px;
+        }
+
+        /* ================= PANEL ================= */
+
+        .panel {
+            background: white;
+            border: 1px solid #eaecf0;
+            border-radius: 15px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table th {
+            color: #667085;
+            font-size: 11px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .person {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .person-avatar {
+            width: 38px;
+            height: 38px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* ================= BADGES ================= */
+
+        .badge-good {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-medium {
+            background: #fef3c7;
+            color: #a16207;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-low {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        /* ================= CLASS CARDS ================= */
+
+        .class-card,
+        .subject-card,
+        .report-card {
+            background: white;
+            border: 1px solid #eaecf0;
+            border-radius: 15px;
+            padding: 20px;
+            transition: .2s;
+            height: 100%;
+        }
+
+        .class-card:hover,
+        .subject-card:hover,
+        .report-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.06);
+        }
+
+        .class-icon,
+        .subject-icon,
+        .report-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        /* ================= PROGRESS ================= */
+
+        .progress {
+            height: 8px;
+            border-radius: 20px;
+        }
+
+        /* ================= SETTINGS ================= */
+
+        .settings-menu {
+            background: white;
+            border: 1px solid #eaecf0;
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .settings-menu button {
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: transparent;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 3px;
+        }
+
+        .settings-menu button:hover,
+        .settings-menu button.active {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 992px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-btn {
+                display: block;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 0 20px;
+            }
+
+            .profile div:last-child {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+
+<!-- =====================================================
+                    SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="bi bi-bar-chart-fill"></i>
+        </div>
+
+        <div>
+            <h5>Smart School</h5>
+            <small>Analytics System</small>
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Asosiy
+    </div>
+
+    <div class="menu-link active" data-page="dashboard">
+        <i class="bi bi-grid-1x2-fill"></i>
+        Dashboard
+    </div>
+
+    <div class="menu-link" data-page="students">
+        <i class="bi bi-people-fill"></i>
+        O‘quvchilar
+    </div>
+
+    <div class="menu-link" data-page="teachers">
+        <i class="bi bi-person-video3"></i>
+        O‘qituvchilar
+    </div>
+
+    <div class="menu-link" data-page="classes">
+        <i class="bi bi-building"></i>
+        Sinflar
+    </div>
+
+
+    <div class="menu-title">
+        Tahlil
+    </div>
+
+    <div class="menu-link" data-page="subjects">
+        <i class="bi bi-book"></i>
+        Fanlar
+    </div>
+
+    <div class="menu-link" data-page="results">
+        <i class="bi bi-bar-chart-line"></i>
+        Natijalar
+    </div>
+
+    <div class="menu-link" data-page="reports">
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        Hisobotlar
+    </div>
+
+
+    <div class="menu-title">
+        Tizim
+    </div>
+
+    <div class="menu-link" data-page="settings">
+        <i class="bi bi-gear"></i>
+        Sozlamalar
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+                    MAIN
+===================================================== -->
+
+<main class="main">
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="d-flex align-items-center gap-3">
+
+        <button
+            class="btn btn-light mobile-btn"
+            onclick="toggleSidebar()">
+
+            <i class="bi bi-list"></i>
+
+        </button>
+
+        <h1 class="header-title" id="headerTitle">
+            Dashboard
+        </h1>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="notification">
+
+            <i class="bi bi-bell fs-5"></i>
+
+            <span class="notification-badge">
+                3
+            </span>
+
+        </div>
+
+
+        <div class="profile">
+
+            <div class="avatar">
+                UM
+            </div>
+
+            <div>
+
+                <strong>Admin</strong>
+
+                <small>
+                    Administrator
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="content">
+
+
+<!-- =====================================================
+                    DASHBOARD
+===================================================== -->
+
+<section class="page active" id="dashboard">
+
+    <h2 class="page-title">
+        Xush kelibsiz, Admin!
+    </h2>
+
+    <p class="page-subtitle">
+        Maktabning bugungi umumiy ko‘rsatkichlari
+    </p>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+                <div class="stat-number">
+                    842
+                </div>
+
+                <div class="stat-label">
+                    Jami o‘quvchilar
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    <i class="bi bi-person-video3"></i>
+                </div>
+
+                <div class="stat-number">
+                    64
+                </div>
+
+                <div class="stat-label">
+                    O‘qituvchilar
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    <i class="bi bi-building"></i>
+                </div>
+
+                <div class="stat-number">
+                    28
+                </div>
+
+                <div class="stat-label">
+                    Sinflar
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+                <div class="stat-number">
+                    78.6%
+                </div>
+
+                <div class="stat-label">
+                    O‘rtacha natija
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3 class="panel-title">
+                        Fanlar bo‘yicha natijalar
+                    </h3>
+
+                    <select class="form-select w-auto">
+
+                        <option>2026-yil</option>
+                        <option>2025-yil</option>
+
+                    </select>
+
+                </div>
+
+                <canvas id="subjectChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-4">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3 class="panel-title">
+                        Natija darajalari
+                    </h3>
+
+                </div>
+
+                <canvas id="resultChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    STUDENTS
+===================================================== -->
+
+<section class="page" id="students">
+
+    <h2 class="page-title">
+        O‘quvchilar
+    </h2>
+
+    <p class="page-subtitle">
+        Barcha o‘quvchilarni boshqarish va tahlil qilish
+    </p>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div class="stat-number">
+                    842
+                </div>
+
+                <div class="stat-label">
+                    Jami o‘quvchilar
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+                <div class="stat-number">
+                    817
+                </div>
+
+                <div class="stat-label">
+                    Faol o‘quvchilar
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    <i class="bi bi-person-x"></i>
+                </div>
+
+                <div class="stat-number">
+                    25
+                </div>
+
+                <div class="stat-label">
+                    Faol emas
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3 class="panel-title">
+                O‘quvchilar ro‘yxati
+            </h3>
+
+            <button
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#studentModal">
+
+                <i class="bi bi-plus-lg"></i>
+                O‘quvchi qo‘shish
+
+            </button>
+
+        </div>
+
+
+        <div class="row g-2 mb-4">
+
+            <div class="col-md-5">
+
+                <input
+                    type="text"
+                    id="studentSearch"
+                    class="form-control"
+                    placeholder="O‘quvchini qidirish...">
+
+            </div>
+
+            <div class="col-md-3">
+
+                <select class="form-select">
+
+                    <option>Barcha sinflar</option>
+                    <option>9-A</option>
+                    <option>9-B</option>
+                    <option>10-A</option>
+                    <option>10-B</option>
+                    <option>11-A</option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <select class="form-select">
+
+                    <option>Barcha holatlar</option>
+                    <option>Faol</option>
+                    <option>Faol emas</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>O‘QUVCHI</th>
+                        <th>SINF</th>
+                        <th>TELEFON</th>
+                        <th>NATIJA</th>
+                        <th>HOLAT</th>
+                        <th>AMAL</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentTable">
+
+                    <tr>
+
+                        <td>
+
+                            <div class="person">
+
+                                <div class="person-avatar">
+                                    AS
+                                </div>
+
+                                <strong>
+                                    Azizbek Saidov
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>11-A</td>
+
+                        <td>
+                            +998 90 123 45 67
+                        </td>
+
+                        <td>
+                            <strong>94.3%</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge-good">
+                                Faol
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+
+                            <div class="person">
+
+                                <div class="person-avatar">
+                                    MK
+                                </div>
+
+                                <strong>
+                                    Muhammad Karimov
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>10-B</td>
+
+                        <td>
+                            +998 91 222 33 44
+                        </td>
+
+                        <td>
+                            <strong>88.3%</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge-good">
+                                Faol
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+
+                            <div class="person">
+
+                                <div class="person-avatar">
+                                    FD
+                                </div>
+
+                                <strong>
+                                    Fotima Davronova
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>9-A</td>
+
+                        <td>
+                            +998 93 555 66 77
+                        </td>
+
+                        <td>
+                            <strong>79.6%</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge-good">
+                                Faol
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    TEACHERS
+===================================================== -->
+
+<section class="page" id="teachers">
+
+    <h2 class="page-title">
+        O‘qituvchilar
+    </h2>
+
+    <p class="page-subtitle">
+        Maktab o‘qituvchilari va ularning faoliyati
+    </p>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-person-video3"></i>
+                </div>
+
+                <div class="stat-number">
+                    64
+                </div>
+
+                <div class="stat-label">
+                    Jami o‘qituvchi
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+                <div class="stat-number">
+                    61
+                </div>
+
+                <div class="stat-label">
+                    Faol
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    <i class="bi bi-book"></i>
+                </div>
+
+                <div class="stat-number">
+                    18
+                </div>
+
+                <div class="stat-label">
+                    Fanlar
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+
+                <div class="stat-number">
+                    86%
+                </div>
+
+                <div class="stat-label">
+                    O‘rtacha natija
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3 class="panel-title">
+                O‘qituvchilar ro‘yxati
+            </h3>
+
+            <button
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#teacherModal">
+
+                <i class="bi bi-plus-lg"></i>
+                O‘qituvchi qo‘shish
+
+            </button>
+
+        </div>
+
+
+        <div class="row g-2 mb-4">
+
+            <div class="col-md-5">
+
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="O‘qituvchini qidirish...">
+
+            </div>
+
+            <div class="col-md-3">
+
+                <select class="form-select">
+
+                    <option>Barcha fanlar</option>
+                    <option>Matematika</option>
+                    <option>Informatika</option>
+                    <option>Fizika</option>
+                    <option>Ingliz tili</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>O‘QITUVCHI</th>
+                        <th>FAN</th>
+                        <th>SINFLAR</th>
+                        <th>O‘QUVCHILAR</th>
+                        <th>NATIJA</th>
+                        <th>HOLAT</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+
+                            <div class="person">
+
+                                <div class="person-avatar">
+                                    AK
+                                </div>
+
+                                <strong>
+                                    Akmal Karimov
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>Matematika</td>
+                        <td>9-A, 10-A, 11-A</td>
+                        <td>91</td>
+                        <td><strong>91.4%</strong></td>
+
+                        <td>
+                            <span class="badge-good">
+                                Faol
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+
+                            <div class="person">
+
+                                <div class="person-avatar">
+                                    NS
+                                </div>
+
+                                <strong>
+                                    Nodira Saidova
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>Informatika</td>
+                        <td>8-A, 9-B, 10-B</td>
+                        <td>87</td>
+                        <td><strong>88.7%</strong></td>
+
+                        <td>
+                            <span class="badge-good">
+                                Faol
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+
+                            <div class="person">
+
+                                <div class="person-avatar">
+                                    JB
+                                </div>
+
+                                <strong>
+                                    Jasur Boboyev
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                        <td>Fizika</td>
+                        <td>10-A, 11-B</td>
+                        <td>54</td>
+                        <td><strong>82.1%</strong></td>
+
+                        <td>
+                            <span class="badge-good">
+                                Faol
+                            </span>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    CLASSES
+===================================================== -->
+
+<section class="page" id="classes">
+
+    <h2 class="page-title">
+        Sinflar
+    </h2>
+
+    <p class="page-subtitle">
+        Sinflar kesimida o‘quvchilar va natijalarni ko‘rish
+    </p>
+
+
+    <div class="row g-4">
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="class-card">
+
+                <div class="class-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+                <h4>
+                    11-A
+                </h4>
+
+                <p class="text-muted">
+                    Sinf rahbari: Akmal Karimov
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘quvchilar
+                    </span>
+
+                    <strong>
+                        31
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-3">
+
+                    <div
+                        class="progress-bar"
+                        style="width:92%">
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="text-muted">
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        92%
+                    </strong>
+
+                </div>
+
+                <button class="btn btn-outline-primary w-100 mt-3">
+                    Batafsil
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="class-card">
+
+                <div class="class-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+                <h4>
+                    10-B
+                </h4>
+
+                <p class="text-muted">
+                    Sinf rahbari: Nodira Saidova
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘quvchilar
+                    </span>
+
+                    <strong>
+                        29
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-3">
+
+                    <div
+                        class="progress-bar"
+                        style="width:86%">
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="text-muted">
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        86%
+                    </strong>
+
+                </div>
+
+                <button class="btn btn-outline-primary w-100 mt-3">
+                    Batafsil
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="class-card">
+
+                <div class="class-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+                <h4>
+                    9-A
+                </h4>
+
+                <p class="text-muted">
+                    Sinf rahbari: Dilshod Aliyev
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘quvchilar
+                    </span>
+
+                    <strong>
+                        28
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-3">
+
+                    <div
+                        class="progress-bar"
+                        style="width:79%">
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="text-muted">
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        79%
+                    </strong>
+
+                </div>
+
+                <button class="btn btn-outline-primary w-100 mt-3">
+                    Batafsil
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="class-card">
+
+                <div class="class-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+                <h4>
+                    9-B
+                </h4>
+
+                <p class="text-muted">
+                    Sinf rahbari: Madina Ergasheva
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘quvchilar
+                    </span>
+
+                    <strong>
+                        27
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-3">
+
+                    <div
+                        class="progress-bar"
+                        style="width:76%">
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="text-muted">
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        76%
+                    </strong>
+
+                </div>
+
+                <button class="btn btn-outline-primary w-100 mt-3">
+                    Batafsil
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="class-card">
+
+                <div class="class-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+                <h4>
+                    10-A
+                </h4>
+
+                <p class="text-muted">
+                    Sinf rahbari: Jasur Boboyev
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘quvchilar
+                    </span>
+
+                    <strong>
+                        30
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-3">
+
+                    <div
+                        class="progress-bar"
+                        style="width:83%">
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="text-muted">
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        83%
+                    </strong>
+
+                </div>
+
+                <button class="btn btn-outline-primary w-100 mt-3">
+                    Batafsil
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    SUBJECTS
+===================================================== -->
+
+<section class="page" id="subjects">
+
+    <h2 class="page-title">
+        Fanlar
+    </h2>
+
+    <p class="page-subtitle">
+        Fanlar bo‘yicha o‘zlashtirish ko‘rsatkichlari
+    </p>
+
+
+    <div class="row g-4">
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    <i class="bi bi-calculator"></i>
+                </div>
+
+                <h5>
+                    Matematika
+                </h5>
+
+                <p class="text-muted">
+                    8 ta o‘qituvchi · 260 o‘quvchi
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        86%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width:86%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    <i class="bi bi-laptop"></i>
+                </div>
+
+                <h5>
+                    Informatika
+                </h5>
+
+                <p class="text-muted">
+                    5 ta o‘qituvchi · 180 o‘quvchi
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        91%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar bg-success"
+                        style="width:91%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    <i class="bi bi-lightning"></i>
+                </div>
+
+                <h5>
+                    Fizika
+                </h5>
+
+                <p class="text-muted">
+                    5 ta o‘qituvchi · 170 o‘quvchi
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        78%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar bg-warning"
+                        style="width:78%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    <i class="bi bi-globe"></i>
+                </div>
+
+                <h5>
+                    Ingliz tili
+                </h5>
+
+                <p class="text-muted">
+                    7 ta o‘qituvchi · 230 o‘quvchi
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        84%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width:84%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    <i class="bi bi-droplet"></i>
+                </div>
+
+                <h5>
+                    Kimyo
+                </h5>
+
+                <p class="text-muted">
+                    4 ta o‘qituvchi · 140 o‘quvchi
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        81%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width:81%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="subject-card">
+
+                <div class="subject-icon">
+                    <i class="bi bi-tree"></i>
+                </div>
+
+                <h5>
+                    Biologiya
+                </h5>
+
+                <p class="text-muted">
+                    4 ta o‘qituvchi · 150 o‘quvchi
+                </p>
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <span>
+                        O‘rtacha natija
+                    </span>
+
+                    <strong>
+                        88%
+                    </strong>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar bg-success"
+                        style="width:88%">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    RESULTS
+===================================================== -->
+
+<section class="page" id="results">
+
+    <h2 class="page-title">
+        Natijalar
+    </h2>
+
+    <p class="page-subtitle">
+        O‘quvchilarning o‘zlashtirish natijalarini tahlil qilish
+    </p>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    <i class="bi bi-trophy"></i>
+                </div>
+
+                <div class="stat-number">
+                    78.6%
+                </div>
+
+                <div class="stat-label">
+                    Umumiy o‘rtacha
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-arrow-up-circle"></i>
+                </div>
+
+                <div class="stat-number">
+                    326
+                </div>
+
+                <div class="stat-label">
+                    Yuqori natija
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    <i class="bi bi-dash-circle"></i>
+                </div>
+
+                <div class="stat-number">
+                    387
+                </div>
+
+                <div class="stat-label">
+                    O‘rta natija
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="stat-card">
+
+                <div class="stat-icon red">
+                    <i class="bi bi-arrow-down-circle"></i>
+                </div>
+
+                <div class="stat-number">
+                    129
+                </div>
+
+                <div class="stat-label">
+                    Past natija
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-lg-7">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3 class="panel-title">
+                        Sinflar bo‘yicha natijalar
+                    </h3>
+
+                </div>
+
+                <canvas id="classChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-5">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3 class="panel-title">
+                        Fanlar bo‘yicha natija
+                    </h3>
+
+                </div>
+
+                <canvas id="resultsSubjectChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3 class="panel-title">
+                O‘quvchilar natijalari
+            </h3>
+
+            <select class="form-select w-auto">
+
+                <option>Barcha fanlar</option>
+                <option>Matematika</option>
+                <option>Informatika</option>
+                <option>Fizika</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>O‘QUVCHI</th>
+                        <th>SINF</th>
+                        <th>MATEMATIKA</th>
+                        <th>INFORMATIKA</th>
+                        <th>FIZIKA</th>
+                        <th>O‘RTACHA</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Azizbek Saidov
+                        </td>
+
+                        <td>11-A</td>
+
+                        <td>96%</td>
+
+                        <td>94%</td>
+
+                        <td>91%</td>
+
+                        <td>
+                            <strong>93.7%</strong>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Muhammad Karimov
+                        </td>
+
+                        <td>10-B</td>
+
+                        <td>88%</td>
+
+                        <td>92%</td>
+
+                        <td>84%</td>
+
+                        <td>
+                            <strong>88%</strong>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Fotima Davronova
+                        </td>
+
+                        <td>9-A</td>
+
+                        <td>78%</td>
+
+                        <td>85%</td>
+
+                        <td>76%</td>
+
+                        <td>
+                            <strong>79.6%</strong>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    REPORTS
+===================================================== -->
+
+<section class="page" id="reports">
+
+    <h2 class="page-title">
+        Hisobotlar
+    </h2>
+
+    <p class="page-subtitle">
+        Maktab faoliyati bo‘yicha hisobotlarni shakllantirish
+    </p>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                </div>
+
+                <h5>
+                    O‘quvchilar hisoboti
+                </h5>
+
+                <p class="text-muted small">
+                    O‘quvchilar soni va holati
+                </p>
+
+                <button class="btn btn-outline-primary w-100">
+                    Ko‘rish
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    <i class="bi bi-bar-chart"></i>
+                </div>
+
+                <h5>
+                    Natijalar hisoboti
+                </h5>
+
+                <p class="text-muted small">
+                    O‘zlashtirish ko‘rsatkichlari
+                </p>
+
+                <button class="btn btn-outline-primary w-100">
+                    Ko‘rish
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    <i class="bi bi-person-video3"></i>
+                </div>
+
+                <h5>
+                    O‘qituvchilar hisoboti
+                </h5>
+
+                <p class="text-muted small">
+                    O‘qituvchilar faoliyati
+                </p>
+
+                <button class="btn btn-outline-primary w-100">
+                    Ko‘rish
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+
+            <div class="report-card">
+
+                <div class="report-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+
+                <h5>
+                    Sinflar hisoboti
+                </h5>
+
+                <p class="text-muted small">
+                    Sinflar kesimidagi natijalar
+                </p>
+
+                <button class="btn btn-outline-primary w-100">
+                    Ko‘rish
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3 class="panel-title">
+                Umumiy natijalar dinamikasi
+            </h3>
+
+            <div class="d-flex gap-2">
+
+                <select class="form-select">
+
+                    <option>2026</option>
+                    <option>2025</option>
+
+                </select>
+
+                <button class="btn btn-primary">
+
+                    <i class="bi bi-download"></i>
+                    Export
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <canvas id="reportChart"></canvas>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+                    SETTINGS
+===================================================== -->
+
+<section class="page" id="settings">
+
+    <h2 class="page-title">
+        Sozlamalar
+    </h2>
+
+    <p class="page-subtitle">
+        Tizim va administrator sozlamalari
+    </p>
+
+
+    <div class="row g-4">
+
+
+        <div class="col-md-3">
+
+            <div class="settings-menu">
+
+                <button class="active">
+                    <i class="bi bi-person me-2"></i>
+                    Profil
+                </button>
+
+                <button>
+                    <i class="bi bi-building me-2"></i>
+                    Maktab
+                </button>
+
+                <button>
+                    <i class="bi bi-bell me-2"></i>
+                    Bildirishnomalar
+                </button>
+
+                <button>
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Xavfsizlik
+                </button>
+
+                <button>
+                    <i class="bi bi-palette me-2"></i>
+                    Ko‘rinish
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-9">
+
+            <div class="panel">
+
+                <h4 class="panel-title mb-4">
+                    Administrator profili
+                </h4>
+
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Ism
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="Umidbek">
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Familiya
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="Admin">
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            value="admin@school.uz">
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Telefon
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="+998 90 000 00 00">
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <label class="form-label">
+                            Lavozim
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="Administrator">
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <button class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            O‘zgarishlarni saqlash
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <h4 class="panel-title mb-4">
+                    Maktab ma'lumotlari
+                </h4>
+
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Maktab nomi
+                        </label>
+
+                        <input
+                            class="form-control"
+                            value="12-son umumiy o‘rta ta'lim maktabi">
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Maktab kodi
+                        </label>
+
+                        <input
+                            class="form-control"
+                            value="SCH-0012">
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Viloyat
+                        </label>
+
+                        <input
+                            class="form-control"
+                            value="Xorazm viloyati">
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Tuman
+                        </label>
+
+                        <input
+                            class="form-control"
+                            value="Urganch shahri">
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <button class="btn btn-primary">
+                            Saqlash
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+
+</main>
+
+
+<!-- =====================================================
+                    STUDENT MODAL
+===================================================== -->
+
+<div class="modal fade" id="studentModal">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Yangi o‘quvchi qo‘shish
+                </h5>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <label class="form-label">
+                    Ism
+                </label>
+
+                <input
+                    class="form-control mb-3"
+                    placeholder="Ism">
+
+
+                <label class="form-label">
+                    Familiya
+                </label>
+
+                <input
+                    class="form-control mb-3"
+                    placeholder="Familiya">
+
+
+                <label class="form-label">
+                    Sinf
+                </label>
+
+                <select class="form-select mb-3">
+
+                    <option>Sinfni tanlang</option>
+                    <option>9-A</option>
+                    <option>9-B</option>
+                    <option>10-A</option>
+                    <option>10-B</option>
+                    <option>11-A</option>
+
+                </select>
+
+
+                <label class="form-label">
+                    Telefon
+                </label>
+
+                <input
+                    class="form-control"
+                    placeholder="+998">
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Bekor qilish
+
+                </button>
+
+                <button class="btn btn-primary">
+
+                    Saqlash
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+                    TEACHER MODAL
+===================================================== -->
+
+<div class="modal fade" id="teacherModal">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Yangi o‘qituvchi
+                </h5>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <input
+                    class="form-control mb-3"
+                    placeholder="Ism">
+
+                <input
+                    class="form-control mb-3"
+                    placeholder="Familiya">
+
+                <select class="form-select mb-3">
+
+                    <option>Fanni tanlang</option>
+                    <option>Matematika</option>
+                    <option>Informatika</option>
+                    <option>Fizika</option>
+                    <option>Ingliz tili</option>
+
+                </select>
+
+                <input
+                    class="form-control"
+                    placeholder="Telefon">
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Bekor qilish
+
+                </button>
+
+                <button class="btn btn-primary">
+                    Saqlash
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+/* =====================================================
+                    PAGE NAVIGATION
+===================================================== */
+
+const menuLinks = document.querySelectorAll(".menu-link");
+
+const pages = document.querySelectorAll(".page");
+
+const headerTitle = document.getElementById("headerTitle");
+
+
+const titles = {
+
+    dashboard: "Dashboard",
+
+    students: "O‘quvchilar",
+
+    teachers: "O‘qituvchilar",
+
+    classes: "Sinflar",
+
+    subjects: "Fanlar",
+
+    results: "Natijalar",
+
+    reports: "Hisobotlar",
+
+    settings: "Sozlamalar"
+
+};
+
+
+menuLinks.forEach(link => {
+
+    link.addEventListener("click", function () {
+
+        const pageName = this.dataset.page;
+
+
+        /* active menu */
+
+        menuLinks.forEach(item => {
+
+            item.classList.remove("active");
+
+        });
+
+        this.classList.add("active");
+
+
+        /* pages */
+
+        pages.forEach(page => {
+
+            page.classList.remove("active");
+
+        });
+
+
+        document
+            .getElementById(pageName)
+            .classList.add("active");
+
+
+        /* title */
+
+        headerTitle.innerText = titles[pageName];
+
+
+        /* mobile sidebar */
+
+        document
+            .getElementById("sidebar")
+            .classList.remove("show");
+
+
+        /* charts */
+
+        setTimeout(() => {
+
+            window.dispatchEvent(new Event("resize"));
+
+        }, 100);
+
+    });
+
+});
+
+
+/* =====================================================
+                    MOBILE SIDEBAR
+===================================================== */
+
+function toggleSidebar() {
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("show");
+
+}
+
+
+/* =====================================================
+                    DASHBOARD CHART
+===================================================== */
+
+new Chart(
+
+    document.getElementById("subjectChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Matematika",
+                "Informatika",
+                "Fizika",
+                "Ingliz tili",
+                "Kimyo",
+                "Biologiya"
+            ],
+
+            datasets: [
+
+                {
+
+                    label: "O‘rtacha natija (%)",
+
+                    data: [
+                        86,
+                        91,
+                        78,
+                        84,
+                        81,
+                        88
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    max: 100
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* =====================================================
+                    RESULT CHART
+===================================================== */
+
+new Chart(
+
+    document.getElementById("resultChart"),
+
+    {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+                "Yuqori",
+                "O‘rta",
+                "Past"
+            ],
+
+            datasets: [
+
+                {
+
+                    data: [
+                        326,
+                        387,
+                        129
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+                    position: "bottom"
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* =====================================================
+                    CLASS CHART
+===================================================== */
+
+new Chart(
+
+    document.getElementById("classChart"),
+
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "9-A",
+                "9-B",
+                "10-A",
+                "10-B",
+                "11-A"
+            ],
+
+            datasets: [
+
+                {
+
+                    label: "O‘rtacha natija",
+
+                    data: [
+                        79,
+                        76,
+                        83,
+                        86,
+                        92
+                    ],
+
+                    tension: .4,
+
+                    fill: false
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    min: 50,
+
+                    max: 100
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* =====================================================
+                    RESULTS SUBJECT CHART
+===================================================== */
+
+new Chart(
+
+    document.getElementById("resultsSubjectChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Matematika",
+                "Informatika",
+                "Fizika",
+                "Ingliz tili",
+                "Kimyo"
+            ],
+
+            datasets: [
+
+                {
+
+                    label: "Natija",
+
+                    data: [
+                        86,
+                        91,
+                        78,
+                        84,
+                        81
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    max: 100
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* =====================================================
+                    REPORT CHART
+===================================================== */
+
+new Chart(
+
+    document.getElementById("reportChart"),
+
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "Yanvar",
+                "Fevral",
+                "Mart",
+                "Aprel",
+                "May",
+                "Iyun",
+                "Sentabr"
+            ],
+
+            datasets: [
+
+                {
+
+                    label: "O‘rtacha natija",
+
+                    data: [
+                        71,
+                        73,
+                        74,
+                        76,
+                        77,
+                        79,
+                        78
+                    ],
+
+                    tension: .4,
+
+                    fill: false
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    min: 50,
+
+                    max: 100
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+/* =====================================================
+                    STUDENT SEARCH
+===================================================== */
+
+const studentSearch =
+    document.getElementById("studentSearch");
+
+
+if (studentSearch) {
+
+    studentSearch.addEventListener(
+        "keyup",
+        function () {
+
+            const value =
+                this.value.toLowerCase();
+
+
+            const rows =
+                document.querySelectorAll(
+                    "#studentTable tr"
+                );
+
+
+            rows.forEach(row => {
+
+                const text =
+                    row.innerText.toLowerCase();
+
+
+                row.style.display =
+                    text.includes(value)
+                        ? ""
+                        : "none";
+
+            });
+
+        }
+    );
+
+}
+
+</script>
+
+</body>
+</html>

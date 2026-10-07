@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications — Smart School Analytics</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --bg: #f5f7fb;
+            --sidebar: #111827;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --info: #0891b2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--sidebar);
+            color: #fff;
+            z-index: 1050;
+            transition: .3s;
+            overflow-y: auto;
+        }
+
+        .brand {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 22px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: linear-gradient(135deg,#6366f1,#8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand-text h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand-text small {
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .menu-title {
+            padding: 20px 22px 8px;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 12px;
+            margin: 0;
+        }
+
+        .nav-menu li {
+            margin-bottom: 4px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 13px;
+            border-radius: 9px;
+            transition: .2s;
+            font-size: 14px;
+        }
+
+        .nav-menu a i {
+            font-size: 18px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #fff;
+            background: rgba(99,102,241,.18);
+        }
+
+        .nav-menu a.active {
+            border-left: 3px solid #6366f1;
+        }
+
+        .notification-count {
+            margin-left: auto;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 20px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 75px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .page-title h4 {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .page-title small {
+            color: var(--muted);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: none;
+            font-size: 18px;
+        }
+
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#6366f1,#8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .admin-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        /* SUMMARY */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 18px;
+        }
+
+        .summary-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,.025);
+        }
+
+        .summary-card small {
+            color: var(--muted);
+            font-size: 12px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .summary-card h3 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .summary-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .purple {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .orange {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        /* NOTIFICATION CARD */
+
+        .notification-panel {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            margin-top: 22px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .panel-header h5 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .panel-header small {
+            color: var(--muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* FILTER */
+
+        .filter-area {
+            padding: 15px 22px;
+            border-bottom: 1px solid var(--border);
+            background: #fafafa;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            width: 270px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 9px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding-left: 35px;
+            outline: none;
+            font-size: 13px;
+            background: #fff;
+        }
+
+        .filter-select {
+            height: 38px;
+            min-width: 150px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 13px;
+            color: var(--text);
+            background: #fff;
+            outline: none;
+        }
+
+        /* NOTIFICATION ITEM */
+
+        .notification-list {
+            padding: 0;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 15px;
+            padding: 19px 22px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: .2s;
+            position: relative;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item:hover {
+            background: #fafafa;
+        }
+
+        .notification-item.unread {
+            background: #f5f7ff;
+        }
+
+        .notification-item.unread::before {
+            content: "";
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary);
+        }
+
+        .notification-icon {
+            width: 45px;
+            height: 45px;
+            min-width: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .icon-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .icon-warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .icon-success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .icon-info {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .icon-purple {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .notification-time {
+            color: var(--muted);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .notification-description {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 6px 0 8px;
+            line-height: 1.5;
+        }
+
+        .notification-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .notification-tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 7px;
+            border-radius: 5px;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin-top: 6px;
+        }
+
+        .read-dot {
+            width: 8px;
+            height: 8px;
+            margin-top: 6px;
+        }
+
+        .notification-menu {
+            border: none;
+            background: transparent;
+            color: #9ca3af;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+        }
+
+        .notification-menu:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* EMPTY */
+
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .empty-state i {
+            font-size: 55px;
+            color: #d1d5db;
+        }
+
+        .empty-state h5 {
+            margin-top: 15px;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* PAGINATION */
+
+        .pagination-area {
+            padding: 18px 22px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination-info {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* MOBILE */
+
+        .mobile-menu {
+            display: none;
+            border: none;
+            background: #f3f4f6;
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            font-size: 20px;
+        }
+
+        @media(max-width:1100px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+        }
+
+        @media(max-width:900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+        }
+
+        @media(max-width:650px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .admin-info {
+                display: none;
+            }
+
+            .panel-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .notification-item {
+                padding: 16px;
+            }
+
+            .notification-top {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .notification-time {
+                white-space: normal;
+            }
+
+            .pagination-area {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+
+        <div class="brand-text">
+            <h5>Smart School</h5>
+            <small>Analytics Platform</small>
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Asosiy
+    </div>
+
+
+    <ul class="nav-menu">
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-people-fill"></i>
+                O‘quvchilar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-person-workspace"></i>
+                O‘qituvchilar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-building"></i>
+                Sinflar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-book-fill"></i>
+                Fanlar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-bar-chart-fill"></i>
+                Natijalar
+            </a>
+        </li>
+
+
+        <div class="menu-title">
+            Tahlil
+        </div>
+
+
+        <li>
+            <a href="analytics.html">
+                <i class="bi bi-graph-up-arrow"></i>
+                Analitika
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i>
+                Hisobotlar
+            </a>
+        </li>
+
+
+        <div class="menu-title">
+            Tizim
+        </div>
+
+
+        <li>
+            <a href="notifications.html" class="active">
+                <i class="bi bi-bell-fill"></i>
+                Bildirishnomalar
+                <span class="notification-count" id="sidebarCount">5</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-gear-fill"></i>
+                Sozlamalar
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button class="mobile-menu" id="mobileMenu">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="page-title">
+
+                <h4>Bildirishnomalar</h4>
+
+                <small>
+                    Tizimdagi barcha muhim xabarlar
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="top-actions">
+
+            <button
+                class="notification-btn"
+                onclick="scrollToNotifications()"
+            >
+
+                <i class="bi bi-bell"></i>
+
+                <span class="notification-dot"></span>
+
+            </button>
+
+
+            <div class="admin-profile">
+
+                <div class="avatar">
+                    A
+                </div>
+
+                <div class="admin-info">
+
+                    <strong>
+                        Admin
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+
+        <!-- SUMMARY -->
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div>
+
+                    <small>
+                        Jami bildirishnomalar
+                    </small>
+
+                    <h3>
+                        24
+                    </h3>
+
+                </div>
+
+                <div class="summary-icon purple">
+                    <i class="bi bi-bell-fill"></i>
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div>
+
+                    <small>
+                        O‘qilmagan
+                    </small>
+
+                    <h3 id="unreadCount">
+                        5
+                    </h3>
+
+                </div>
+
+                <div class="summary-icon blue">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div>
+
+                    <small>
+                        Muhim
+                    </small>
+
+                    <h3>
+                        7
+                    </h3>
+
+                </div>
+
+                <div class="summary-icon orange">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div>
+
+                    <small>
+                        Bugun
+                    </small>
+
+                    <h3>
+                        9
+                    </h3>
+
+                </div>
+
+                <div class="summary-icon green">
+                    <i class="bi bi-calendar-day-fill"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NOTIFICATIONS -->
+
+        <div class="notification-panel" id="notificationsPanel">
+
+
+            <!-- HEADER -->
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h5>
+                        Barcha bildirishnomalar
+                    </h5>
+
+                    <small>
+                        So‘nggi tizim xabarlari
+                    </small>
+
+                </div>
+
+
+                <div class="header-actions">
+
+                    <button
+                        class="btn btn-sm btn-outline-primary"
+                        onclick="markAllRead()"
+                    >
+                        <i class="bi bi-check2-all me-1"></i>
+                        Hammasini o‘qilgan deb belgilash
+                    </button>
+
+                    <button
+                        class="btn btn-sm btn-outline-danger"
+                        onclick="clearNotifications()"
+                    >
+                        <i class="bi bi-trash3 me-1"></i>
+                        Tozalash
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTER -->
+
+            <div class="filter-area">
+
+                <div class="search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        id="notificationSearch"
+                        placeholder="Bildirishnomani qidirish..."
+                    >
+
+                </div>
+
+
+                <select
+                    class="filter-select"
+                    id="typeFilter"
+                >
+
+                    <option value="all">
+                        Barcha turlar
+                    </option>
+
+                    <option value="academic">
+                        O‘quv natijalari
+                    </option>
+
+                    <option value="attendance">
+                        Davomat
+                    </option>
+
+                    <option value="assignment">
+                        Topshiriqlar
+                    </option>
+
+                    <option value="system">
+                        Tizim
+                    </option>
+
+                </select>
+
+
+                <select
+                    class="filter-select"
+                    id="statusFilter"
+                >
+
+                    <option value="all">
+                        Barchasi
+                    </option>
+
+                    <option value="unread">
+                        O‘qilmagan
+                    </option>
+
+                    <option value="read">
+                        O‘qilgan
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- LIST -->
+
+            <div
+                class="notification-list"
+                id="notificationList"
+            >
+
+
+                <!-- 1 -->
+
+                <div
+                    class="notification-item unread"
+                    data-type="academic"
+                    data-status="unread"
+                    data-title="Sinf natijasi pasaydi"
+                    onclick="openNotification(
+                        'Sinf natijasi pasaydi',
+                        '11-B sinfining o‘rtacha natijasi oxirgi testdan so‘ng 4.2% ga pasaygan. Sinf bo‘yicha batafsil analitikani ko‘rib chiqishingiz mumkin.',
+                        'O‘quv natijalari',
+                        '5 daqiqa oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-danger">
+                        <i class="bi bi-graph-down-arrow"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Sinf natijasi pasaydi
+                            </h6>
+
+                            <span class="notification-time">
+                                5 daqiqa oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            11-B sinfining o‘rtacha natijasi oxirgi testdan so‘ng
+                            4.2% ga pasaygan.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                O‘quv natijalari
+                            </span>
+
+                            <span class="notification-tag">
+                                11-B
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="unread-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 2 -->
+
+                <div
+                    class="notification-item unread"
+                    data-type="attendance"
+                    data-status="unread"
+                    data-title="Davomat ogohlantirishi"
+                    onclick="openNotification(
+                        'Davomat ogohlantirishi',
+                        'Sardor Ismoilovning joriy oy davomida 14 ta darsga qatnashmagani qayd etildi. Sinf rahbari bilan nazorat olib borish tavsiya etiladi.',
+                        'Davomat',
+                        '28 daqiqa oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-warning">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Davomat ogohlantirishi
+                            </h6>
+
+                            <span class="notification-time">
+                                28 daqiqa oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            Sardor Ismoilovning davomat ko‘rsatkichi
+                            86% gacha tushgan.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Davomat
+                            </span>
+
+                            <span class="notification-tag">
+                                11-A
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="unread-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 3 -->
+
+                <div
+                    class="notification-item unread"
+                    data-type="assignment"
+                    data-status="unread"
+                    data-title="Yangi topshiriq"
+                    onclick="openNotification(
+                        'Yangi topshiriq',
+                        'Dilshod Karimov tomonidan 11-A sinf uchun “Python asoslari” mavzusida yangi topshiriq yaratildi. Topshirish muddati: 02.10.2026, 18:00.',
+                        'Topshiriq',
+                        '1 soat oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-purple">
+                        <i class="bi bi-journal-plus"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Yangi topshiriq yaratildi
+                            </h6>
+
+                            <span class="notification-time">
+                                1 soat oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            11-A sinf uchun “Python asoslari” mavzusida
+                            yangi topshiriq berildi.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Topshiriq
+                            </span>
+
+                            <span class="notification-tag">
+                                11-A
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="unread-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 4 -->
+
+                <div
+                    class="notification-item unread"
+                    data-type="academic"
+                    data-status="unread"
+                    data-title="O‘quvchi natijasi"
+                    onclick="openNotification(
+                        'O‘quvchi natijasi',
+                        'Sevinch Abdullayevaning o‘rtacha natijasi 76.2% ni tashkil etdi. Informatika fanida qo‘shimcha mashg‘ulot talab qilinishi mumkin.',
+                        'O‘quv natijalari',
+                        '2 soat oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-info">
+                        <i class="bi bi-person-exclamation"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                O‘quvchi natijasi bo‘yicha ogohlantirish
+                            </h6>
+
+                            <span class="notification-time">
+                                2 soat oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            Sevinch Abdullayevaning o‘rtacha natijasi
+                            76.2% ni tashkil etdi.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                O‘quv natijalari
+                            </span>
+
+                            <span class="notification-tag">
+                                11-A
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="unread-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 5 -->
+
+                <div
+                    class="notification-item unread"
+                    data-type="system"
+                    data-status="unread"
+                    data-title="Hisobot tayyor"
+                    onclick="openNotification(
+                        'Oylik hisobot tayyor',
+                        '2026-yil sentabr oyi bo‘yicha umumiy o‘quv natijalari hisoboti shakllantirildi. Hisobotlar bo‘limidan ko‘rishingiz va eksport qilishingiz mumkin.',
+                        'Tizim',
+                        '3 soat oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-success">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Oylik hisobot tayyor
+                            </h6>
+
+                            <span class="notification-time">
+                                3 soat oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            Sentabr oyi bo‘yicha umumiy hisobot
+                            shakllantirildi.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Tizim
+                            </span>
+
+                            <span class="notification-tag">
+                                Hisobot
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="unread-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 6 -->
+
+                <div
+                    class="notification-item"
+                    data-type="assignment"
+                    data-status="read"
+                    data-title="Topshiriq muddati"
+                    onclick="openNotification(
+                        'Topshiriq muddati',
+                        '10-B sinf uchun berilgan “Algoritmlar va blok-sxema” topshirig‘ining muddati yaqinlashmoqda.',
+                        'Topshiriq',
+                        'Kecha'
+                    )"
+                >
+
+                    <div class="notification-icon icon-warning">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Topshiriq muddati yaqinlashmoqda
+                            </h6>
+
+                            <span class="notification-time">
+                                Kecha
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            “Algoritmlar va blok-sxema” topshirig‘ining
+                            muddati 1 kun ichida tugaydi.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Topshiriq
+                            </span>
+
+                            <span class="notification-tag">
+                                10-B
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="read-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 7 -->
+
+                <div
+                    class="notification-item"
+                    data-type="system"
+                    data-status="read"
+                    data-title="Tizim yangilandi"
+                    onclick="openNotification(
+                        'Tizim yangilandi',
+                        'Smart School Analytics tizimining yangi versiyasi muvaffaqiyatli o‘rnatildi.',
+                        'Tizim',
+                        'Kecha'
+                    )"
+                >
+
+                    <div class="notification-icon icon-purple">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Tizim yangilandi
+                            </h6>
+
+                            <span class="notification-time">
+                                Kecha
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            Smart School Analytics yangi versiyaga
+                            muvaffaqiyatli yangilandi.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Tizim
+                            </span>
+
+                            <span class="notification-tag">
+                                v1.2.0
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="read-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 8 -->
+
+                <div
+                    class="notification-item"
+                    data-type="attendance"
+                    data-status="read"
+                    data-title="Davomat hisoboti"
+                    onclick="openNotification(
+                        'Davomat hisoboti',
+                        'Maktab bo‘yicha sentabr oyining umumiy davomat ko‘rsatkichi 93.2% ni tashkil etdi.',
+                        'Davomat',
+                        '2 kun oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-info">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Oylik davomat hisoboti
+                            </h6>
+
+                            <span class="notification-time">
+                                2 kun oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            Maktab bo‘yicha sentabr oyining umumiy
+                            davomat ko‘rsatkichi 93.2%.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Davomat
+                            </span>
+
+                            <span class="notification-tag">
+                                Sentabr
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="read-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- 9 -->
+
+                <div
+                    class="notification-item"
+                    data-type="academic"
+                    data-status="read"
+                    data-title="Yangi natijalar"
+                    onclick="openNotification(
+                        'Yangi test natijalari',
+                        'Informatika fanidan 11-A sinf o‘quvchilarining yangi test natijalari tizimga yuklandi.',
+                        'O‘quv natijalari',
+                        '3 kun oldin'
+                    )"
+                >
+
+                    <div class="notification-icon icon-success">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <h6 class="notification-title">
+                                Yangi test natijalari
+                            </h6>
+
+                            <span class="notification-time">
+                                3 kun oldin
+                            </span>
+
+                        </div>
+
+
+                        <p class="notification-description">
+                            Informatika fanidan 11-A sinfning yangi
+                            test natijalari tizimga yuklandi.
+                        </p>
+
+
+                        <div class="notification-meta">
+
+                            <span class="notification-tag">
+                                Natijalar
+                            </span>
+
+                            <span class="notification-tag">
+                                Informatika
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="read-dot"></div>
+
+
+                    <button
+                        class="notification-menu"
+                        onclick="event.stopPropagation(); deleteNotification(this)"
+                    >
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                class="empty-state"
+                id="emptyState"
+            >
+
+                <i class="bi bi-bell-slash"></i>
+
+                <h5>
+                    Bildirishnoma topilmadi
+                </h5>
+
+                <p>
+                    Qidiruv yoki filter shartlarini o‘zgartirib ko‘ring.
+                </p>
+
+            </div>
+
+
+            <!-- PAGINATION -->
+
+            <div class="pagination-area">
+
+                <div class="pagination-info">
+                    9 ta bildirishnomadan 1–9 tasi
+                </div>
+
+                <nav>
+
+                    <ul class="pagination pagination-sm mb-0">
+
+                        <li class="page-item disabled">
+                            <a class="page-link">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        <li class="page-item active">
+                            <a class="page-link">
+                                1
+                            </a>
+                        </li>
+
+                        <li class="page-item">
+                            <a
+                                class="page-link"
+                                href="#"
+                                onclick="demoPage(2)"
+                            >
+                                2
+                            </a>
+                        </li>
+
+                        <li class="page-item">
+                            <a
+                                class="page-link"
+                                href="#"
+                                onclick="demoPage(2)"
+                            >
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- DETAIL MODAL -->
+
+<div
+    class="modal fade"
+    id="notificationModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content border-0">
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="modalTitle"
+                >
+                    Bildirishnoma
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="d-flex gap-3">
+
+                    <div
+                        class="notification-icon icon-info"
+                        id="modalIcon"
+                    >
+                        <i class="bi bi-bell"></i>
+                    </div>
+
+                    <div>
+
+                        <div
+                            class="text-muted small mb-1"
+                            id="modalTime"
+                        ></div>
+
+                        <div
+                            class="badge bg-light text-dark mb-3"
+                            id="modalType"
+                        ></div>
+
+                        <p
+                            class="mb-0"
+                            id="modalDescription"
+                            style="line-height:1.7;"
+                        ></p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-light"
+                    data-bs-dismiss="modal"
+                >
+                    Yopish
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="markCurrentRead()"
+                >
+                    <i class="bi bi-check2 me-1"></i>
+                    O‘qilgan deb belgilash
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    /* MOBILE SIDEBAR */
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    mobileMenu.addEventListener("click", function () {
+
+        sidebar.classList.toggle("show");
+
+    });
+
+
+    /* SEARCH + FILTER */
+
+    const searchInput =
+        document.getElementById("notificationSearch");
+
+    const typeFilter =
+        document.getElementById("typeFilter");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+
+    function filterNotifications() {
+
+        const search =
+            searchInput.value.toLowerCase();
+
+        const type =
+            typeFilter.value;
+
+        const status =
+            statusFilter.value;
+
+        const items =
+            document.querySelectorAll(".notification-item");
+
+        let visibleCount = 0;
+
+
+        items.forEach(function(item) {
+
+            const title =
+                item.dataset.title.toLowerCase();
+
+            const description =
+                item.innerText.toLowerCase();
+
+            const itemType =
+                item.dataset.type;
+
+            const itemStatus =
+                item.dataset.status;
+
+
+            const matchesSearch =
+                title.includes(search) ||
+                description.includes(search);
+
+
+            const matchesType =
+                type === "all" ||
+                itemType === type;
+
+
+            const matchesStatus =
+                status === "all" ||
+                itemStatus === status;
+
+
+            if (
+                matchesSearch &&
+                matchesType &&
+                matchesStatus
+            ) {
+
+                item.style.display = "flex";
+
+                visibleCount++;
+
+            } else {
+
+                item.style.display = "none";
+
+            }
+
+        });
+
+
+        document.getElementById("emptyState")
+            .style.display =
+            visibleCount === 0 ? "block" : "none";
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterNotifications
+    );
+
+    typeFilter.addEventListener(
+        "change",
+        filterNotifications
+    );
+
+    statusFilter.addEventListener(
+        "change",
+        filterNotifications
+    );
+
+
+    /* OPEN NOTIFICATION */
+
+    let currentNotification = null;
+
+    function openNotification(
+        title,
+        description,
+        type,
+        time
+    ) {
+
+        currentNotification = event.currentTarget;
+
+        document.getElementById("modalTitle")
+            .innerText = title;
+
+        document.getElementById("modalDescription")
+            .innerText = description;
+
+        document.getElementById("modalType")
+            .innerText = type;
+
+        document.getElementById("modalTime")
+            .innerText = time;
+
+
+        const modal =
+            new bootstrap.Modal(
+                document.getElementById(
+                    "notificationModal"
+                )
+            );
+
+        modal.show();
+
+
+        /* Automatically mark as read */
+
+        if (
+            currentNotification.classList.contains(
+                "unread"
+            )
+        ) {
+
+            currentNotification.classList.remove(
+                "unread"
+            );
+
+            currentNotification.dataset.status =
+                "read";
+
+            const dot =
+                currentNotification.querySelector(
+                    ".unread-dot"
+                );
+
+            if (dot) {
+
+                dot.className =
+                    "read-dot";
+
+            }
+
+            updateUnreadCount();
+
+        }
+
+    }
+
+
+    /* MARK ALL READ */
+
+    function markAllRead() {
+
+        const items =
+            document.querySelectorAll(
+                ".notification-item"
+            );
+
+
+        items.forEach(function(item) {
+
+            item.classList.remove("unread");
+
+            item.dataset.status = "read";
+
+
+            const dot =
+                item.querySelector(".unread-dot");
+
+            if (dot) {
+
+                dot.className = "read-dot";
+
+            }
+
+        });
+
+
+        updateUnreadCount();
+
+        alert(
+            "Barcha bildirishnomalar o‘qilgan deb belgilandi."
+        );
+
+    }
+
+
+    /* UPDATE COUNT */
+
+    function updateUnreadCount() {
+
+        const unread =
+            document.querySelectorAll(
+                ".notification-item.unread"
+            ).length;
+
+
+        document.getElementById("unreadCount")
+            .innerText = unread;
+
+        document.getElementById("sidebarCount")
+            .innerText = unread;
+
+
+        if (unread === 0) {
+
+            document.getElementById(
+                "sidebarCount"
+            ).style.display = "none";
+
+        } else {
+
+            document.getElementById(
+                "sidebarCount"
+            ).style.display = "flex";
+
+        }
+
+    }
+
+
+    /* MARK CURRENT READ */
+
+    function markCurrentRead() {
+
+        if (currentNotification) {
+
+            currentNotification.classList.remove(
+                "unread"
+            );
+
+            currentNotification.dataset.status =
+                "read";
+
+            const dot =
+                currentNotification.querySelector(
+                    ".unread-dot"
+                );
+
+            if (dot) {
+
+                dot.className = "read-dot";
+
+            }
+
+            updateUnreadCount();
+
+        }
+
+        bootstrap.Modal
+            .getInstance(
+                document.getElementById(
+                    "notificationModal"
+                )
+            )
+            .hide();
+
+    }
+
+
+    /* DELETE ONE */
+
+    function deleteNotification(button) {
+
+        const item =
+            button.closest(
+                ".notification-item"
+            );
+
+        if (!item) return;
+
+
+        item.style.transition = ".25s";
+
+        item.style.opacity = "0";
+
+        item.style.transform =
+            "translateX(30px)";
+
+
+        setTimeout(function() {
+
+            item.remove();
+
+            updateUnreadCount();
+
+            filterNotifications();
+
+        }, 250);
+
+    }
+
+
+    /* CLEAR */
+
+    function clearNotifications() {
+
+        const confirmDelete =
+            confirm(
+                "Barcha bildirishnomalarni o‘chirishni xohlaysizmi?"
+            );
+
+
+        if (!confirmDelete) return;
+
+
+        const items =
+            document.querySelectorAll(
+                ".notification-item"
+            );
+
+
+        items.forEach(function(item) {
+
+            item.style.display = "none";
+
+        });
+
+
+        document.getElementById(
+            "emptyState"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "unreadCount"
+        ).innerText = "0";
+
+
+        document.getElementById(
+            "sidebarCount"
+        ).style.display = "none";
+
+    }
+
+
+    /* TOP NOTIFICATION BUTTON */
+
+    function scrollToNotifications() {
+
+        document.getElementById(
+            "notificationsPanel"
+        ).scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /* DEMO PAGINATION */
+
+    function demoPage(page) {
+
+        event.preventDefault();
+
+        alert(
+            "Pagination backend integratsiyasidan keyin real ma’lumotlar bilan ishlaydi."
+        );
+
+    }
+
+</script>
+
+</body>
+</html>

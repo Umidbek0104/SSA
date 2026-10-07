@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Class Detail — Smart School Analytics</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --bg: #f5f7fb;
+            --sidebar: #111827;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --info: #0891b2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--sidebar);
+            color: #fff;
+            z-index: 1050;
+            transition: .3s;
+            overflow-y: auto;
+        }
+
+        .brand {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 22px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: linear-gradient(135deg,#6366f1,#8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .brand-text h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand-text small {
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        .menu-title {
+            padding: 20px 22px 8px;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 12px;
+            margin: 0;
+        }
+
+        .nav-menu li {
+            margin-bottom: 4px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 13px;
+            border-radius: 9px;
+            transition: .2s;
+            font-size: 14px;
+        }
+
+        .nav-menu a i {
+            font-size: 18px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #fff;
+            background: rgba(99,102,241,.18);
+        }
+
+        .nav-menu a.active {
+            border-left: 3px solid #6366f1;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR */
+
+        .topbar {
+            height: 75px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .page-title h4 {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .page-title small {
+            color: var(--muted);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            border: none;
+            font-size: 18px;
+        }
+
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#6366f1,#8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .admin-info span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 30px;
+        }
+
+        /* CLASS HEADER */
+
+        .class-header {
+            background: linear-gradient(135deg,#3730a3,#6366f1);
+            border-radius: 18px;
+            padding: 28px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-header::after {
+            content: "";
+            position: absolute;
+            width: 330px;
+            height: 330px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.06);
+            right: -100px;
+            top: -160px;
+        }
+
+        .class-main {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .class-icon {
+            width: 85px;
+            height: 85px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.17);
+            border: 1px solid rgba(255,255,255,.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .class-info h2 {
+            margin: 0;
+            font-size: 29px;
+        }
+
+        .class-info p {
+            margin: 5px 0;
+            color: rgba(255,255,255,.85);
+        }
+
+        .class-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(34,197,94,.2);
+            color: #dcfce7;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .class-buttons {
+            margin-top: 22px;
+            display: flex;
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-white {
+            border: none;
+            background: #fff;
+            color: var(--primary-dark);
+            padding: 9px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-transparent {
+            border: 1px solid rgba(255,255,255,.35);
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            padding: 9px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        /* STATS */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 18px;
+            margin-top: 22px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 3px 12px rgba(0,0,0,.025);
+        }
+
+        .stat-info small {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .stat-info h3 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .purple {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .orange {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        /* CARDS */
+
+        .section-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.025);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .section-header h5 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .section-header small {
+            color: var(--muted);
+        }
+
+        /* CHART */
+
+        .chart-box {
+            height: 310px;
+            position: relative;
+        }
+
+        /* SUBJECT */
+
+        .subject-row {
+            margin-bottom: 17px;
+        }
+
+        .subject-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .subject-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .subject-score {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 20px;
+            background: #eef0f4;
+        }
+
+        /* TABLE */
+
+        .table-responsive {
+            border-radius: 10px;
+        }
+
+        .custom-table {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .custom-table th {
+            background: #f8fafc;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            white-space: nowrap;
+        }
+
+        .custom-table td,
+        .custom-table th {
+            padding: 13px 12px;
+            vertical-align: middle;
+        }
+
+        .student-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .student-name {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .student-id {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .badge-soft {
+            padding: 6px 9px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* ABSENCE */
+
+        .absence-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .absence-item:last-child {
+            border-bottom: none;
+        }
+
+        .absence-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .absence-avatar {
+            width: 36px;
+            height: 36px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .absence-name strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .absence-name span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .absence-count {
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        /* ATTENTION */
+
+        .attention-box {
+            border-radius: 10px;
+            padding: 15px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            margin-bottom: 12px;
+        }
+
+        .attention-box strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .attention-box span {
+            color: #9a3412;
+            font-size: 12px;
+        }
+
+        /* SEARCH */
+
+        .search-box {
+            position: relative;
+            width: 240px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 9px;
+            color: var(--muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 37px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding-left: 35px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .mobile-menu {
+            display: none;
+            border: none;
+            background: #f3f4f6;
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            font-size: 20px;
+        }
+
+        @media(max-width:1100px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+        }
+
+        @media(max-width:900px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+        }
+
+        @media(max-width:650px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .class-main {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .section-header {
+                flex-wrap: wrap;
+            }
+
+            .admin-info {
+                display: none;
+            }
+
+            .class-info h2 {
+                font-size: 24px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+
+        <div class="brand-text">
+            <h5>Smart School</h5>
+            <small>Analytics Platform</small>
+        </div>
+
+    </div>
+
+    <div class="menu-title">Asosiy</div>
+
+    <ul class="nav-menu">
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-people-fill"></i>
+                O‘quvchilar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-person-workspace"></i>
+                O‘qituvchilar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html" class="active">
+                <i class="bi bi-building"></i>
+                Sinflar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-book-fill"></i>
+                Fanlar
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-bar-chart-fill"></i>
+                Natijalar
+            </a>
+        </li>
+
+        <div class="menu-title">Tahlil</div>
+
+        <li>
+            <a href="analytics.html">
+                <i class="bi bi-graph-up-arrow"></i>
+                Analitika
+            </a>
+        </li>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i>
+                Hisobotlar
+            </a>
+        </li>
+
+        <div class="menu-title">Tizim</div>
+
+        <li>
+            <a href="index.html">
+                <i class="bi bi-gear-fill"></i>
+                Sozlamalar
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button class="mobile-menu" id="mobileMenu">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="page-title">
+                <h4>Sinf tafsilotlari</h4>
+                <small>Sinf bo‘yicha batafsil statistika</small>
+            </div>
+
+        </div>
+
+        <div class="top-actions">
+
+            <button class="notification-btn" onclick="showNotification()">
+
+                <i class="bi bi-bell"></i>
+
+                <span class="notification-dot"></span>
+
+            </button>
+
+            <div class="admin-profile">
+
+                <div class="avatar">
+                    A
+                </div>
+
+                <div class="admin-info">
+                    <strong>Admin</strong>
+                    <span>Administrator</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+        <!-- CLASS HEADER -->
+
+        <div class="class-header">
+
+            <div class="class-main">
+
+                <div class="class-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+                <div class="class-info">
+
+                    <h2>11-A sinf</h2>
+
+                    <p>
+                        <i class="bi bi-person-workspace me-1"></i>
+                        Sinf rahbari: Dilnoza Ahmedova
+                    </p>
+
+                    <p>
+                        <i class="bi bi-calendar3 me-1"></i>
+                        2026–2027 o‘quv yili
+                    </p>
+
+                    <span class="class-status">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Faol sinf
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="class-buttons">
+
+                <button class="btn-white" onclick="editClass()">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Sinfni tahrirlash
+                </button>
+
+                <button class="btn-transparent" onclick="exportClass()">
+                    <i class="bi bi-download me-1"></i>
+                    Hisobot yuklash
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <small>O‘quvchilar</small>
+                    <h3>32</h3>
+                </div>
+
+                <div class="stat-icon purple">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <small>O‘rtacha natija</small>
+                    <h3>92.4%</h3>
+                </div>
+
+                <div class="stat-icon green">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <small>Davomat</small>
+                    <h3>97.1%</h3>
+                </div>
+
+                <div class="stat-icon blue">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <small>Topshirmaganlar</small>
+                    <h3>3</h3>
+                </div>
+
+                <div class="stat-icon orange">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <!-- PERFORMANCE -->
+
+            <div class="col-lg-8">
+
+                <div class="section-card">
+
+                    <div class="section-header">
+
+                        <div>
+                            <h5>Sinf natijalari dinamikasi</h5>
+                            <small>Oxirgi 6 oy bo‘yicha o‘rtacha ko‘rsatkich</small>
+                        </div>
+
+                        <span class="badge-soft badge-success">
+                            +8.3%
+                        </span>
+
+                    </div>
+
+                    <div class="chart-box">
+
+                        <canvas id="classPerformanceChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LEVEL -->
+
+            <div class="col-lg-4">
+
+                <div class="section-card">
+
+                    <div class="section-header">
+
+                        <div>
+                            <h5>O‘zlashtirish darajasi</h5>
+                            <small>O‘quvchilar taqsimoti</small>
+                        </div>
+
+                    </div>
+
+                    <div style="height:260px; position:relative;">
+
+                        <canvas id="levelChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUBJECT RESULTS -->
+
+        <div class="section-card">
+
+            <div class="section-header">
+
+                <div>
+                    <h5>Fanlar kesimida natijalar</h5>
+                    <small>11-A sinf o‘quvchilarining o‘rtacha natijalari</small>
+                </div>
+
+                <i class="bi bi-bar-chart-fill fs-4 text-primary"></i>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <div class="subject-row">
+
+                        <div class="subject-top">
+                            <span class="subject-name">Informatika</span>
+                            <span class="subject-score">96%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width:96%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="subject-row">
+
+                        <div class="subject-top">
+                            <span class="subject-name">Matematika</span>
+                            <span class="subject-score">94%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width:94%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="subject-row">
+
+                        <div class="subject-top">
+                            <span class="subject-name">Fizika</span>
+                            <span class="subject-score">91%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width:91%"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="subject-row">
+
+                        <div class="subject-top">
+                            <span class="subject-name">Ingliz tili</span>
+                            <span class="subject-score">89%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width:89%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="subject-row">
+
+                        <div class="subject-top">
+                            <span class="subject-name">Kimyo</span>
+                            <span class="subject-score">87%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width:87%"></div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="subject-row">
+
+                        <div class="subject-top">
+                            <span class="subject-name">Biologiya</span>
+                            <span class="subject-score">85%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width:85%"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STUDENTS -->
+
+        <div class="section-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h5>Sinf o‘quvchilari</h5>
+
+                    <small>
+                        Jami 32 nafar o‘quvchi
+                    </small>
+
+                </div>
+
+                <div class="search-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        id="studentSearch"
+                        placeholder="O‘quvchini qidirish..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table custom-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+                            <th>O‘quvchi</th>
+                            <th>O‘rtacha</th>
+                            <th>Davomat</th>
+                            <th>Testlar</th>
+                            <th>Holat</th>
+                            <th>Amal</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="studentTable">
+
+                        <tr>
+
+                            <td>1</td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="student-avatar">
+                                        AS
+                                    </div>
+
+                                    <div>
+                                        <div class="student-name">
+                                            Azizbek Saidov
+                                        </div>
+
+                                        <div class="student-id">
+                                            ST-00124
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <strong>96.4%</strong>
+                            </td>
+
+                            <td>98%</td>
+
+                            <td>24</td>
+
+                            <td>
+                                <span class="badge-soft badge-success">
+                                    A’lo
+                                </span>
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-sm btn-light"
+                                    onclick="viewStudent('Azizbek Saidov')"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>2</td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="student-avatar">
+                                        FK
+                                    </div>
+
+                                    <div>
+                                        <div class="student-name">
+                                            Fotima Karimova
+                                        </div>
+
+                                        <div class="student-id">
+                                            ST-00125
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <strong>94.7%</strong>
+                            </td>
+
+                            <td>97%</td>
+
+                            <td>23</td>
+
+                            <td>
+                                <span class="badge-soft badge-success">
+                                    A’lo
+                                </span>
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-sm btn-light"
+                                    onclick="viewStudent('Fotima Karimova')"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>3</td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="student-avatar">
+                                        MS
+                                    </div>
+
+                                    <div>
+                                        <div class="student-name">
+                                            Mohira Sobirova
+                                        </div>
+
+                                        <div class="student-id">
+                                            ST-00126
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <strong>88.3%</strong>
+                            </td>
+
+                            <td>94%</td>
+
+                            <td>21</td>
+
+                            <td>
+                                <span class="badge-soft badge-success">
+                                    Yaxshi
+                                </span>
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-sm btn-light"
+                                    onclick="viewStudent('Mohira Sobirova')"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>4</td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="student-avatar">
+                                        OH
+                                    </div>
+
+                                    <div>
+                                        <div class="student-name">
+                                            Otabek Hasanov
+                                        </div>
+
+                                        <div class="student-id">
+                                            ST-00127
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <strong>79.6%</strong>
+                            </td>
+
+                            <td>91%</td>
+
+                            <td>19</td>
+
+                            <td>
+                                <span class="badge-soft badge-warning">
+                                    E’tibor kerak
+                                </span>
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-sm btn-light"
+                                    onclick="viewStudent('Otabek Hasanov')"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>5</td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="student-avatar">
+                                        SA
+                                    </div>
+
+                                    <div>
+                                        <div class="student-name">
+                                            Sevinch Abdullayeva
+                                        </div>
+
+                                        <div class="student-id">
+                                            ST-00128
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <strong>76.2%</strong>
+                            </td>
+
+                            <td>89%</td>
+
+                            <td>18</td>
+
+                            <td>
+                                <span class="badge-soft badge-warning">
+                                    E’tibor kerak
+                                </span>
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-sm btn-light"
+                                    onclick="viewStudent('Sevinch Abdullayeva')"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>6</td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <div class="student-avatar">
+                                        SI
+                                    </div>
+
+                                    <div>
+                                        <div class="student-name">
+                                            Sardor Ismoilov
+                                        </div>
+
+                                        <div class="student-id">
+                                            ST-00129
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <strong>72.8%</strong>
+                            </td>
+
+                            <td>86%</td>
+
+                            <td>16</td>
+
+                            <td>
+                                <span class="badge-soft badge-danger">
+                                    Nazorat kerak
+                                </span>
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-sm btn-light"
+                                    onclick="viewStudent('Sardor Ismoilov')"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTTOM -->
+
+        <div class="row">
+
+            <!-- ABSENCE -->
+
+            <div class="col-lg-6">
+
+                <div class="section-card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h5>Davomati past o‘quvchilar</h5>
+
+                            <small>
+                                Qo‘shimcha nazorat talab qilinadi
+                            </small>
+
+                        </div>
+
+                        <i class="bi bi-calendar-x fs-4 text-danger"></i>
+
+                    </div>
+
+
+                    <div class="absence-item">
+
+                        <div class="absence-left">
+
+                            <div class="absence-avatar">
+                                SI
+                            </div>
+
+                            <div class="absence-name">
+
+                                <strong>Sardor Ismoilov</strong>
+
+                                <span>11-A sinf</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="absence-count">
+                            14 ta
+                        </div>
+
+                    </div>
+
+
+                    <div class="absence-item">
+
+                        <div class="absence-left">
+
+                            <div class="absence-avatar">
+                                SA
+                            </div>
+
+                            <div class="absence-name">
+
+                                <strong>Sevinch Abdullayeva</strong>
+
+                                <span>11-A sinf</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="absence-count">
+                            11 ta
+                        </div>
+
+                    </div>
+
+
+                    <div class="absence-item">
+
+                        <div class="absence-left">
+
+                            <div class="absence-avatar">
+                                OH
+                            </div>
+
+                            <div class="absence-name">
+
+                                <strong>Otabek Hasanov</strong>
+
+                                <span>11-A sinf</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="absence-count">
+                            9 ta
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ATTENTION -->
+
+            <div class="col-lg-6">
+
+                <div class="section-card">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h5>E’tibor talab qiladigan o‘quvchilar</h5>
+
+                            <small>
+                                Natijasi 80% dan past bo‘lganlar
+                            </small>
+
+                        </div>
+
+                        <i class="bi bi-exclamation-triangle fs-4 text-warning"></i>
+
+                    </div>
+
+
+                    <div class="attention-box">
+
+                        <strong>
+                            Sardor Ismoilov — 72.8%
+                        </strong>
+
+                        <span>
+                            Matematika va biologiya fanlarida natija past.
+                        </span>
+
+                    </div>
+
+
+                    <div class="attention-box">
+
+                        <strong>
+                            Sevinch Abdullayeva — 76.2%
+                        </strong>
+
+                        <span>
+                            Informatika bo‘yicha qo‘shimcha mashg‘ulot tavsiya etiladi.
+                        </span>
+
+                    </div>
+
+
+                    <div class="attention-box">
+
+                        <strong>
+                            Otabek Hasanov — 79.6%
+                        </strong>
+
+                        <span>
+                            Uy vazifalarini topshirish ko‘rsatkichi past.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    /* MOBILE SIDEBAR */
+
+    const mobileMenu = document.getElementById("mobileMenu");
+    const sidebar = document.getElementById("sidebar");
+
+    mobileMenu.addEventListener("click", function () {
+        sidebar.classList.toggle("show");
+    });
+
+
+    /* PERFORMANCE CHART */
+
+    new Chart(
+        document.getElementById("classPerformanceChart"),
+        {
+            type: "line",
+
+            data: {
+
+                labels: [
+                    "Aprel",
+                    "May",
+                    "Iyun",
+                    "Iyul",
+                    "Avgust",
+                    "Sentabr"
+                ],
+
+                datasets: [
+
+                    {
+                        label: "O‘rtacha natija",
+
+                        data: [
+                            84.1,
+                            85.8,
+                            87.3,
+                            89.6,
+                            90.8,
+                            92.4
+                        ],
+
+                        borderColor: "#4f46e5",
+
+                        backgroundColor: "rgba(79,70,229,.08)",
+
+                        borderWidth: 3,
+
+                        tension: .4,
+
+                        fill: true,
+
+                        pointRadius: 4,
+
+                        pointBackgroundColor: "#4f46e5"
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        min: 70,
+
+                        max: 100,
+
+                        ticks: {
+                            callback: function(value) {
+                                return value + "%";
+                            }
+                        }
+
+                    },
+
+                    x: {
+
+                        grid: {
+                            display: false
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* LEVEL CHART */
+
+    new Chart(
+        document.getElementById("levelChart"),
+        {
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Yuqori",
+                    "O‘rta",
+                    "Past"
+                ],
+
+                datasets: [
+
+                    {
+                        data: [
+                            19,
+                            11,
+                            2
+                        ],
+
+                        backgroundColor: [
+                            "#16a34a",
+                            "#f59e0b",
+                            "#dc2626"
+                        ],
+
+                        borderWidth: 0
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                cutout: "70%",
+
+                plugins: {
+
+                    legend: {
+                        position: "bottom"
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* STUDENT SEARCH */
+
+    document.getElementById("studentSearch")
+        .addEventListener("keyup", function () {
+
+            const value = this.value.toLowerCase();
+
+            const rows =
+                document.querySelectorAll("#studentTable tr");
+
+            rows.forEach(function(row) {
+
+                const text =
+                    row.innerText.toLowerCase();
+
+                row.style.display =
+                    text.includes(value) ? "" : "none";
+
+            });
+
+        });
+
+
+    /* FUNCTIONS */
+
+    function viewStudent(name) {
+
+        alert(
+            name +
+            " o‘quvchisining profilini ochish funksiyasi keyingi bosqichda student-profile.html bilan bog‘lanadi."
+        );
+
+    }
+
+
+    function editClass() {
+
+        alert(
+            "Sinf ma’lumotlarini tahrirlash oynasi backend integratsiyasidan keyin ishlaydi."
+        );
+
+    }
+
+
+    function exportClass() {
+
+        alert(
+            "Sinf hisoboti Excel/PDF formatida eksport qilinadigan funksiya keyingi backend bosqichida ulanadi."
+        );
+
+    }
+
+
+    function showNotification() {
+
+        alert(
+            "3 ta yangi bildirishnoma mavjud."
+        );
+
+    }
+
+</script>
+
+</body>
+</html>

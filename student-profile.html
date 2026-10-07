@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>O‘quvchi profili - Smart School Analytics</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        /* =========================================
+           GENERAL
+        ========================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #202939;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #111827;
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .logo-area {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            margin-right: 12px;
+        }
+
+        .logo-text strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .logo-text span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .menu-title {
+            color: #6b7280;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 25px 22px 10px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            margin: 3px 12px;
+        }
+
+        .menu-item a {
+            color: #aeb7c5;
+            padding: 11px 12px;
+            display: flex;
+            align-items: center;
+            border-radius: 9px;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .menu-item a i {
+            font-size: 17px;
+            width: 28px;
+        }
+
+        .menu-item a:hover {
+            background: rgba(255,255,255,.07);
+            color: white;
+        }
+
+        .menu-item.active a {
+            background: #0d6efd;
+            color: white;
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           TOPBAR
+        ========================================= */
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid #e7eaf0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .page-title h4 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .page-title small {
+            color: #8a94a6;
+            font-size: 12px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e5e9ef;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667085;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: #dc3545;
+            border-radius: 50%;
+            top: 8px;
+            right: 8px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 10px;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .admin-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: #e8f0ff;
+            color: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .admin-info span {
+            display: block;
+            font-size: 11px;
+            color: #98a1b2;
+        }
+
+
+        /* =========================================
+           CONTENT
+        ========================================= */
+
+        .content {
+            padding: 30px;
+        }
+
+
+        /* =========================================
+           BACK BUTTON
+        ========================================= */
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: .2s;
+        }
+
+        .back-btn:hover {
+            color: #0d6efd;
+        }
+
+
+        /* =========================================
+           PROFILE HEADER
+        ========================================= */
+
+        .profile-header {
+            background: white;
+            border: 1px solid #e8ebf0;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .profile-main {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .student-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #0d6efd, #6f42c1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .profile-info h3 {
+            margin: 0 0 5px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .profile-info p {
+            margin: 0 0 8px;
+            color: #7b8495;
+            font-size: 14px;
+        }
+
+        .profile-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .tag-blue {
+            color: #0d6efd;
+            background: #eaf2ff;
+        }
+
+        .tag-green {
+            color: #198754;
+            background: #eaf8f0;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-outline-custom {
+            border: 1px solid #dfe4eb;
+            background: white;
+            color: #596579;
+            border-radius: 9px;
+            padding: 9px 14px;
+            font-size: 13px;
+        }
+
+        .btn-outline-custom:hover {
+            background: #f5f7fa;
+        }
+
+        .btn-primary-custom {
+            border: none;
+            background: #0d6efd;
+            color: white;
+            border-radius: 9px;
+            padding: 9px 14px;
+            font-size: 13px;
+        }
+
+
+        /* =========================================
+           STAT CARDS
+        ========================================= */
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e8ebf0;
+            border-radius: 14px;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .blue-icon {
+            background: #eaf2ff;
+            color: #0d6efd;
+        }
+
+        .green-icon {
+            background: #eaf8f0;
+            color: #198754;
+        }
+
+        .orange-icon {
+            background: #fff4df;
+            color: #f59f00;
+        }
+
+        .purple-icon {
+            background: #f0eaff;
+            color: #7950f2;
+        }
+
+        .stat-label {
+            color: #8992a3;
+            font-size: 12px;
+        }
+
+        .stat-number {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .stat-footer {
+            font-size: 11px;
+            color: #7f8999;
+        }
+
+        .positive {
+            color: #198754;
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           CARDS
+        ========================================= */
+
+        .card-custom {
+            background: white;
+            border: 1px solid #e8ebf0;
+            border-radius: 14px;
+            padding: 22px;
+            height: 100%;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .card-title span {
+            font-size: 12px;
+            color: #98a1b2;
+        }
+
+
+        /* =========================================
+           PERSONAL INFO
+        ========================================= */
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #8a94a6;
+            font-size: 13px;
+        }
+
+        .info-value {
+            color: #30394a;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+
+        /* =========================================
+           SUBJECT TABLE
+        ========================================= */
+
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-custom th {
+            color: #8a94a6;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 11px 8px;
+            border-bottom: 1px solid #e9edf2;
+            text-align: left;
+        }
+
+        .table-custom td {
+            padding: 14px 8px;
+            border-bottom: 1px solid #f0f2f5;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .table-custom tr:last-child td {
+            border-bottom: none;
+        }
+
+        .subject-name {
+            font-weight: 600;
+            color: #30394a;
+        }
+
+        .subject-teacher {
+            color: #8a94a6;
+            font-size: 11px;
+        }
+
+        .score {
+            font-weight: 700;
+        }
+
+        .score-high {
+            color: #198754;
+        }
+
+        .score-medium {
+            color: #f59f00;
+        }
+
+        .score-low {
+            color: #dc3545;
+        }
+
+        .progress-custom {
+            width: 100px;
+            height: 7px;
+            background: #edf0f4;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-custom div {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .progress-green {
+            background: #198754;
+        }
+
+        .progress-yellow {
+            background: #f59f00;
+        }
+
+        .progress-red {
+            background: #dc3545;
+        }
+
+
+        /* =========================================
+           RESULT BADGES
+        ========================================= */
+
+        .result-badge {
+            display: inline-flex;
+            padding: 5px 9px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success-custom {
+            color: #198754;
+            background: #eaf8f0;
+        }
+
+        .badge-warning-custom {
+            color: #b87900;
+            background: #fff4df;
+        }
+
+        .badge-danger-custom {
+            color: #dc3545;
+            background: #fff0f1;
+        }
+
+
+        /* =========================================
+           ATTENDANCE
+        ========================================= */
+
+        .attendance-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .attendance-circle {
+            width: 105px;
+            height: 105px;
+            border-radius: 50%;
+            background:
+                conic-gradient(
+                    #198754 0deg 331deg,
+                    #e9edf2 331deg 360deg
+                );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .attendance-inner {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .attendance-inner strong {
+            font-size: 19px;
+        }
+
+        .attendance-inner span {
+            font-size: 9px;
+            color: #9aa3b2;
+        }
+
+        .attendance-details {
+            flex: 1;
+        }
+
+        .attendance-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 12px;
+        }
+
+
+        /* =========================================
+           COMMENTS
+        ========================================= */
+
+        .comment {
+            padding: 13px 0;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .comment-author {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .comment-date {
+            font-size: 10px;
+            color: #a0a8b5;
+        }
+
+        .comment-text {
+            font-size: 12px;
+            color: #737e90;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+
+        /* =========================================
+           TEST TABLE
+        ========================================= */
+
+        .test-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 9px;
+            background: #edf4ff;
+            color: #0d6efd;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .profile-actions {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .admin-info {
+                display: none;
+            }
+
+            .profile-main {
+                align-items: flex-start;
+            }
+
+            .student-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 23px;
+            }
+
+            .profile-info h3 {
+                font-size: 19px;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+            .profile-actions button {
+                width: 100%;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .table-custom {
+                min-width: 650px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .profile-main {
+                flex-direction: column;
+            }
+
+            .topbar .page-title small {
+                display: none;
+            }
+
+            .page-title h4 {
+                font-size: 17px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo-area">
+
+        <div class="logo-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+
+        <div class="logo-text">
+            <strong>Smart School</strong>
+            <span>Analytics Platform</span>
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Asosiy
+    </div>
+
+
+    <div class="menu-item">
+        <a href="index.html">
+            <i class="bi bi-grid-1x2-fill"></i>
+            Dashboard
+        </a>
+    </div>
+
+
+    <div class="menu-item active">
+        <a href="student-profile.html">
+            <i class="bi bi-people-fill"></i>
+            O‘quvchilar
+        </a>
+    </div>
+
+
+    <div class="menu-item">
+        <a href="#">
+            <i class="bi bi-person-workspace"></i>
+            O‘qituvchilar
+        </a>
+    </div>
+
+
+    <div class="menu-item">
+        <a href="#">
+            <i class="bi bi-building"></i>
+            Sinflar
+        </a>
+    </div>
+
+
+    <div class="menu-item">
+        <a href="#">
+            <i class="bi bi-book"></i>
+            Fanlar
+        </a>
+    </div>
+
+
+    <div class="menu-title">
+        Tahlil
+    </div>
+
+
+    <div class="menu-item">
+        <a href="#">
+            <i class="bi bi-bar-chart-fill"></i>
+            Natijalar
+        </a>
+    </div>
+
+
+    <div class="menu-item">
+        <a href="#">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            Hisobotlar
+        </a>
+    </div>
+
+
+    <div class="menu-title">
+        Tizim
+    </div>
+
+
+    <div class="menu-item">
+        <a href="#">
+            <i class="bi bi-gear-fill"></i>
+            Sozlamalar
+        </a>
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="d-flex align-items-center gap-3">
+
+            <button
+                class="icon-btn mobile-menu"
+                onclick="toggleSidebar()">
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+
+            <div class="page-title">
+
+                <h4>O‘quvchi profili</h4>
+
+                <small>
+                    Smart School Analytics / O‘quvchilar
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="top-actions">
+
+            <button class="icon-btn">
+
+                <i class="bi bi-search"></i>
+
+            </button>
+
+
+            <button class="icon-btn">
+
+                <i class="bi bi-bell"></i>
+
+                <span class="notification-dot"></span>
+
+            </button>
+
+
+            <div class="admin-profile">
+
+                <div class="admin-avatar">
+                    AD
+                </div>
+
+                <div class="admin-info">
+
+                    <strong>Admin</strong>
+
+                    <span>Administrator</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- CONTENT -->
+
+    <section class="content">
+
+
+        <!-- BACK -->
+
+        <a href="index.html" class="back-btn">
+
+            <i class="bi bi-arrow-left"></i>
+
+            O‘quvchilar ro‘yxatiga qaytish
+
+        </a>
+
+
+
+        <!-- =================================================
+             PROFILE HEADER
+        ================================================== -->
+
+        <div class="profile-header">
+
+
+            <div class="profile-main">
+
+                <div class="student-avatar">
+                    AS
+                </div>
+
+
+                <div class="profile-info">
+
+                    <h3>Azizbek Saidov</h3>
+
+                    <p>
+                        <i class="bi bi-person-badge me-1"></i>
+                        O‘quvchi ID: ST-2026-00124
+                    </p>
+
+
+                    <div class="profile-tags">
+
+                        <span class="tag tag-blue">
+                            11-A sinf
+                        </span>
+
+                        <span class="tag tag-green">
+                            Faol
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-actions">
+
+                <button
+                    class="btn-outline-custom"
+                    onclick="editStudent()">
+
+                    <i class="bi bi-pencil me-1"></i>
+                    Tahrirlash
+
+                </button>
+
+
+                <button
+                    class="btn-primary-custom"
+                    onclick="downloadReport()">
+
+                    <i class="bi bi-download me-1"></i>
+                    Hisobot
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STATISTICS
+        ================================================== -->
+
+        <div class="row g-3 mb-4">
+
+
+            <!-- Average -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+                            <div class="stat-label">
+                                O‘rtacha natija
+                            </div>
+
+                            <div class="stat-number">
+                                86.4%
+                            </div>
+                        </div>
+
+                        <div class="stat-icon blue-icon">
+                            <i class="bi bi-bar-chart-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="stat-footer">
+                        O‘tgan oyga nisbatan
+                        <span class="positive">
+                            +4.2%
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Subjects -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+                            <div class="stat-label">
+                                Fanlar
+                            </div>
+
+                            <div class="stat-number">
+                                12
+                            </div>
+                        </div>
+
+                        <div class="stat-icon green-icon">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="stat-footer">
+                        10 ta fan bo‘yicha baho mavjud
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Attendance -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+                            <div class="stat-label">
+                                Davomat
+                            </div>
+
+                            <div class="stat-number">
+                                92%
+                            </div>
+                        </div>
+
+                        <div class="stat-icon orange-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="stat-footer">
+                        3 ta sababsiz qoldirilgan
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Tests -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+                            <div class="stat-label">
+                                Nazorat ishlari
+                            </div>
+
+                            <div class="stat-number">
+                                24
+                            </div>
+                        </div>
+
+                        <div class="stat-icon purple-icon">
+                            <i class="bi bi-clipboard-check-fill"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="stat-footer">
+                        21 ta muvaffaqiyatli topshirilgan
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FIRST ROW
+        ================================================== -->
+
+        <div class="row g-3 mb-4">
+
+
+            <!-- PERSONAL INFORMATION -->
+
+            <div class="col-xl-4">
+
+                <div class="card-custom">
+
+                    <div class="card-title">
+
+                        <h5>
+                            Shaxsiy ma’lumotlar
+                        </h5>
+
+                        <span>
+                            Profil
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            F.I.Sh.
+                        </span>
+
+                        <span class="info-value">
+                            Azizbek Saidov
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Tug‘ilgan sana
+                        </span>
+
+                        <span class="info-value">
+                            15.04.2009
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Jinsi
+                        </span>
+
+                        <span class="info-value">
+                            Erkak
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Sinf
+                        </span>
+
+                        <span class="info-value">
+                            11-A
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Sinf rahbari
+                        </span>
+
+                        <span class="info-value">
+                            Dilshod Karimov
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Telefon
+                        </span>
+
+                        <span class="info-value">
+                            +998 90 123 45 67
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Qabul qilingan sana
+                        </span>
+
+                        <span class="info-value">
+                            02.09.2024
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PERFORMANCE CHART -->
+
+            <div class="col-xl-8">
+
+                <div class="card-custom">
+
+                    <div class="card-title">
+
+                        <h5>
+                            O‘zlashtirish dinamikasi
+                        </h5>
+
+                        <span>
+                            2026-yil
+                        </span>
+
+                    </div>
+
+                    <div style="height: 280px;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUBJECT RESULTS
+        ================================================== -->
+
+        <div class="row g-3 mb-4">
+
+
+            <div class="col-xl-8">
+
+                <div class="card-custom">
+
+                    <div class="card-title">
+
+                        <h5>
+                            Fanlar bo‘yicha natijalar
+                        </h5>
+
+                        <span>
+                            2025–2026 o‘quv yili
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table-custom">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Fan
+                                    </th>
+
+                                    <th>
+                                        O‘qituvchi
+                                    </th>
+
+                                    <th>
+                                        Natija
+                                    </th>
+
+                                    <th>
+                                        Daraja
+                                    </th>
+
+                                    <th>
+                                        Progress
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="subject-name">
+                                            Matematika
+                                        </div>
+
+                                        <div class="subject-teacher">
+                                            6 soat / hafta
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        Otabekov A.
+                                    </td>
+
+                                    <td>
+                                        <span class="score score-high">
+                                            94%
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-success-custom">
+                                            Yuqori
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="progress-custom">
+                                            <div
+                                                class="progress-green"
+                                                style="width:94%">
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="subject-name">
+                                            Informatika
+                                        </div>
+
+                                        <div class="subject-teacher">
+                                            4 soat / hafta
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        Karimov D.
+                                    </td>
+
+                                    <td>
+                                        <span class="score score-high">
+                                            97%
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-success-custom">
+                                            Yuqori
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="progress-custom">
+                                            <div
+                                                class="progress-green"
+                                                style="width:97%">
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="subject-name">
+                                            Fizika
+                                        </div>
+
+                                        <div class="subject-teacher">
+                                            3 soat / hafta
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        Rasulov B.
+                                    </td>
+
+                                    <td>
+                                        <span class="score score-high">
+                                            89%
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-success-custom">
+                                            Yuqori
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="progress-custom">
+                                            <div
+                                                class="progress-green"
+                                                style="width:89%">
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="subject-name">
+                                            Ingliz tili
+                                        </div>
+
+                                        <div class="subject-teacher">
+                                            4 soat / hafta
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        Yusupova M.
+                                    </td>
+
+                                    <td>
+                                        <span class="score score-medium">
+                                            78%
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-warning-custom">
+                                            O‘rta
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="progress-custom">
+                                            <div
+                                                class="progress-yellow"
+                                                style="width:78%">
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="subject-name">
+                                            Kimyo
+                                        </div>
+
+                                        <div class="subject-teacher">
+                                            2 soat / hafta
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        Tursunova N.
+                                    </td>
+
+                                    <td>
+                                        <span class="score score-medium">
+                                            74%
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-warning-custom">
+                                            O‘rta
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="progress-custom">
+                                            <div
+                                                class="progress-yellow"
+                                                style="width:74%">
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="subject-name">
+                                            Biologiya
+                                        </div>
+
+                                        <div class="subject-teacher">
+                                            2 soat / hafta
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        Qodirova S.
+                                    </td>
+
+                                    <td>
+                                        <span class="score score-low">
+                                            61%
+                                        </span>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-danger-custom">
+                                            Past
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="progress-custom">
+                                            <div
+                                                class="progress-red"
+                                                style="width:61%">
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ATTENDANCE -->
+
+            <div class="col-xl-4">
+
+                <div class="card-custom">
+
+                    <div class="card-title">
+
+                        <h5>
+                            Davomat
+                        </h5>
+
+                        <span>
+                            2026
+                        </span>
+
+                    </div>
+
+
+                    <div class="attendance-box">
+
+                        <div class="attendance-circle">
+
+                            <div class="attendance-inner">
+
+                                <strong>
+                                    92%
+                                </strong>
+
+                                <span>
+                                    Davomat
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="attendance-details">
+
+                            <div class="attendance-item">
+
+                                <span>
+                                    Jami darslar
+                                </span>
+
+                                <strong>
+                                    184
+                                </strong>
+
+                            </div>
+
+
+                            <div class="attendance-item">
+
+                                <span>
+                                    Qatnashgan
+                                </span>
+
+                                <strong class="text-success">
+                                    169
+                                </strong>
+
+                            </div>
+
+
+                            <div class="attendance-item">
+
+                                <span>
+                                    Sababli
+                                </span>
+
+                                <strong class="text-warning">
+                                    12
+                                </strong>
+
+                            </div>
+
+
+                            <div class="attendance-item">
+
+                                <span>
+                                    Sababsiz
+                                </span>
+
+                                <strong class="text-danger">
+                                    3
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TESTS + COMMENTS
+        ================================================== -->
+
+        <div class="row g-3">
+
+
+            <!-- TEST RESULTS -->
+
+            <div class="col-xl-7">
+
+                <div class="card-custom">
+
+                    <div class="card-title">
+
+                        <h5>
+                            So‘nggi nazorat ishlari
+                        </h5>
+
+                        <span>
+                            Barcha natijalar
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table-custom">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Nazorat ishi
+                                    </th>
+
+                                    <th>
+                                        Fan
+                                    </th>
+
+                                    <th>
+                                        Sana
+                                    </th>
+
+                                    <th>
+                                        Natija
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <span class="test-icon">
+                                            <i class="bi bi-calculator"></i>
+                                        </span>
+
+                                        Algebra nazorat ishi
+
+                                    </td>
+
+                                    <td>
+                                        Matematika
+                                    </td>
+
+                                    <td>
+                                        20.09.2026
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-success-custom">
+                                            94%
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <span class="test-icon">
+                                            <i class="bi bi-cpu"></i>
+                                        </span>
+
+                                        Algoritmlar testi
+
+                                    </td>
+
+                                    <td>
+                                        Informatika
+                                    </td>
+
+                                    <td>
+                                        18.09.2026
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-success-custom">
+                                            97%
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <span class="test-icon">
+                                            <i class="bi bi-lightning-fill"></i>
+                                        </span>
+
+                                        Mexanika nazorati
+
+                                    </td>
+
+                                    <td>
+                                        Fizika
+                                    </td>
+
+                                    <td>
+                                        15.09.2026
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-success-custom">
+                                            89%
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+
+                                        <span class="test-icon">
+                                            <i class="bi bi-translate"></i>
+                                        </span>
+
+                                        Grammar Test
+
+                                    </td>
+
+                                    <td>
+                                        Ingliz tili
+                                    </td>
+
+                                    <td>
+                                        12.09.2026
+                                    </td>
+
+                                    <td>
+
+                                        <span class="result-badge badge-warning-custom">
+                                            78%
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TEACHER COMMENTS -->
+
+            <div class="col-xl-5">
+
+                <div class="card-custom">
+
+                    <div class="card-title">
+
+                        <h5>
+                            O‘qituvchi izohlari
+                        </h5>
+
+                        <span>
+                            So‘nggi
+                        </span>
+
+                    </div>
+
+
+                    <div class="comment">
+
+                        <div class="comment-top">
+
+                            <span class="comment-author">
+                                Otabekov A. · Matematika
+                            </span>
+
+                            <span class="comment-date">
+                                20.09.2026
+                            </span>
+
+                        </div>
+
+                        <p class="comment-text">
+                            Masalalarni yechish tezligi yaxshi.
+                            Murakkab masalalarda yechimni izohlashga
+                            ko‘proq e’tibor berish tavsiya etiladi.
+                        </p>
+
+                    </div>
+
+
+                    <div class="comment">
+
+                        <div class="comment-top">
+
+                            <span class="comment-author">
+                                Karimov D. · Informatika
+                            </span>
+
+                            <span class="comment-date">
+                                18.09.2026
+                            </span>
+
+                        </div>
+
+                        <p class="comment-text">
+                            Dasturlash topshiriqlarini mustaqil bajaradi.
+                            Algoritmik fikrlash darajasi yaxshi.
+                        </p>
+
+                    </div>
+
+
+                    <div class="comment">
+
+                        <div class="comment-top">
+
+                            <span class="comment-author">
+                                Qodirova S. · Biologiya
+                            </span>
+
+                            <span class="comment-date">
+                                16.09.2026
+                            </span>
+
+                        </div>
+
+                        <p class="comment-text">
+                            Biologiya fanidagi mavzularni takrorlash
+                            va qo‘shimcha mashqlar bajarish tavsiya etiladi.
+                        </p>
+
+                    </div>
+
+
+                    <div class="comment">
+
+                        <div class="comment-top">
+
+                            <span class="comment-author">
+                                Yusupova M. · Ingliz tili
+                            </span>
+
+                            <span class="comment-date">
+                                12.09.2026
+                            </span>
+
+                        </div>
+
+                        <p class="comment-text">
+                            Lug‘at boyligini oshirish va speaking
+                            mashqlariga ko‘proq vaqt ajratish kerak.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+    // ==========================================
+    // SIDEBAR
+    // ==========================================
+
+    function toggleSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList.toggle("show");
+
+    }
+
+
+
+    // ==========================================
+    // PERFORMANCE CHART
+    // ==========================================
+
+    const chartCanvas =
+        document.getElementById("performanceChart");
+
+
+    new Chart(chartCanvas, {
+
+        type: "line",
+
+        data: {
+
+            labels: [
+                "Yanvar",
+                "Fevral",
+                "Mart",
+                "Aprel",
+                "May",
+                "Sentabr",
+                "Oktabr"
+            ],
+
+            datasets: [
+
+                {
+                    label: "O‘zlashtirish",
+
+                    data: [
+                        78,
+                        80,
+                        81,
+                        83,
+                        85,
+                        84,
+                        86
+                    ],
+
+                    borderColor: "#0d6efd",
+
+                    backgroundColor:
+                        "rgba(13,110,253,0.08)",
+
+                    borderWidth: 3,
+
+                    tension: 0.4,
+
+                    fill: true,
+
+                    pointRadius: 4,
+
+                    pointHoverRadius: 6
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    min: 50,
+
+                    max: 100,
+
+                    ticks: {
+                        callback: function(value) {
+                            return value + "%";
+                        }
+                    },
+
+                    grid: {
+                        color: "#eef1f5"
+                    }
+
+                },
+
+                x: {
+
+                    grid: {
+                        display: false
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+
+
+    // ==========================================
+    // EDIT STUDENT
+    // ==========================================
+
+    function editStudent() {
+
+        alert(
+            "O‘quvchini tahrirlash oynasi backend qismi bilan ulanadi."
+        );
+
+    }
+
+
+
+    // ==========================================
+    // DOWNLOAD REPORT
+    // ==========================================
+
+    function downloadReport() {
+
+        alert(
+            "O‘quvchi hisoboti PDF formatida yaratish funksiyasi backend qismida qo‘shiladi."
+        );
+
+    }
+
+</script>
+
+
+</body>
+</html>
